@@ -3,7 +3,7 @@
 ## Installation
 1. Install satpy and dependencies
 2. Clone repository
-3. Edit ~./profile and update SATPY_CONFIG_PATH to point at the git repository directory
+3. Edit ~./profile and update `SATPY_CONFIG_PATH` to point at the git repository directory
     - Example: `export SATPY_CONFIG_PATH=/home/cameron/Projects/hypso-satpy/`
 4. Run `source ~/.profile`
 
