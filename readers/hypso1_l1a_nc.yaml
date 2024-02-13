@@ -1,0 +1,31 @@
+reader:
+  name: hypso1_l1a_nc
+  short_name: HYPSO-1 Reader
+  long_name: HYPSO-1 Reader
+  description: >
+    L1a NetCDF file reader for NTNU HYPSO-1 files.
+  sensors: [hypso1]
+  status: Alpha
+  supports_fsspec: false
+  reader: !!python/name:satpy.readers.yaml_reader.FileYAMLReader
+
+datasets:
+  longitude:
+    name: longitude
+    standard_name: longitude
+    units: degrees_east
+    file_type: [hypso1_gcp_points, hypso1_l1a_nc]
+
+  latitude:
+    name: latitude
+    standard_name: latitude
+    units: degrees_north
+    file_type: [hypso1_gcp_points, hypso1_l1a_nc]
+
+file_types:
+    hypso1_l1a_nc:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_l1a_nc.HYPSO1L1ANCFileHandler
+        file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-l1a.nc']
+    hypso1_gcp_points:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsFileHandler
+        file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{time:%Y_%m_%dT%H_%M_%S}-bin3.points']

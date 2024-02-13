@@ -1,0 +1,57 @@
+reader:
+  name: hypso1_bip
+  short_name: HYPSO-1 Reader
+  long_name: HYPSO-1 Reader
+  description: >
+    Band interleaved by pixel file and NetCDF file readers for NTNU HYPSO-1 files.
+  sensors: [hypso1]
+  status: Alpha
+  supports_fsspec: false
+  reader: !!python/name:satpy.readers.yaml_reader.FileYAMLReader
+
+datasets:
+  longitude:
+    name: longitude
+    standard_name: longitude
+    units: degrees_east
+    file_type: [hypso1_gcp_points_lat_lon, hypso1_lon_dat]
+
+  latitude:
+    name: latitude
+    standard_name: latitude
+    units: degrees_north
+    file_type: [hypso1_gcp_points_lat_lon, hypso1_lat_dat]
+
+file_types:
+    hypso1_bip:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1BIPFileHandler
+        file_patterns: ['{target}_{time:%Y_%m_%dT%H_%M_%S}.bip', '{target}_{time:%Y-%m-%d_%H%MZ}.bip']
+        #file_patterns: ['{target}_{time:%Y_%m_%dT%H_%M_%S}.bip', '{target}_{time:%Y-%m-%d_%H%MZ}.bip', '*.bip']
+        #coordinates: [longitude, latitude]
+        modifiers: 
+        requires: [hypso1_ini]
+    hypso1_lat_dat:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1LatDatFileHandler
+        file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-latitudes.dat']
+        requires: [hypso1_ini]
+    hypso1_lon_dat:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1LonDatFileHandler
+        file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-longitudes.dat']
+        requires: [hypso1_ini]
+    #hypso1_footprint_wkt:
+    #    file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1FootprintWKTFileHandler
+    #    file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-footprint-wkt.txt', '{target}_{time:%Y_%m_%dT%H_%M_%S}-footprint-wkt.txt']
+    hypso1_gcp_points_lat_lon:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsLatLonFileHandler
+        #file_patterns: ['{gcp_filename}.points', '{target}_{time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{time:%Y_%m_%dT%H_%M_%S}-bin3.points']
+        file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{time:%Y_%m_%dT%H_%M_%S}-bin3.points']
+        requires: [hypso1_ini]
+    hypso1_ini:
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1INIFileHandler
+        file_patterns: ['{target}_{time:%Y_%m_%dT%H_%M_%S}-hsi0', '{target}_{time:%Y-%m-%d_%H%MZ}-hsi0']
+        #file_patterns: ['capture_config.ini', '{capture}-hsi0/capture_config.ini']
+        #file_patterns: ['{capture}-hsi0/capture_config.ini']
+        #file_patterns: ['capture_config.ini']
+        #file_patterns: ['{target}_{time:%Y_%m_%dT%H_%M_%S}-hsi0/capture_config.ini', '{target}_{time:%Y-%m-%d_%H%MZ}-hsi0/capture_config.ini']
+        #file_patterns: ['./{target}_{time:%Y_%m_%dT%H_%M_%S}-hsi0/capture_config.ini', './{target}_{time:%Y-%m-%d_%H%MZ}-hsi0/capture_config.ini']
+
