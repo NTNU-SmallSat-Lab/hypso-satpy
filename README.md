@@ -2,7 +2,7 @@
 
 ## Installation
 1. Install Satpy and dependencies
-    - [https://satpy.readthedocs.io/en/stable/install.html](SatPy installaton instructions)
+    - [SatPy installation instructions](https://satpy.readthedocs.io/en/stable/install.html)
 2. Clone repository
 3. Edit ~./profile and update `SATPY_CONFIG_PATH` to point at the git repository directory
     - Example: `export SATPY_CONFIG_PATH=/home/cameron/Projects/hypso-satpy/`

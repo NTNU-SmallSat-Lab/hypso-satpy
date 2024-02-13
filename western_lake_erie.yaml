@@ -1,4 +1,4 @@
-roi:
+western_lake_erie:
   description: roi
   projection:
     EPSG: 4326
