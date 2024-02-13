@@ -199,7 +199,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         self.datacube = self.datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
 
         # ------ Calibration Hell -------:
-        import correction
+        import calibration.correction as correction
 
         # Copy info dict from INI:
         self.info = req_fh[0].info
