@@ -201,7 +201,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
 
         # Flip or mirror image
-        #datacube = datacube[:, ::-1, :]
+        datacube = datacube[:, ::-1, :]
         #flip = fh_kwargs.get("flip", None)
         #if flip is not None: 
         #    if flip:

@@ -28,7 +28,6 @@ datasets_2 = scene_2.available_dataset_names()
 scene_1.load(['latitude', 'longitude', '80', '40', '15'])
 scene_2.load(['latitude', 'longitude', '80', '40', '15'])
 
-
 grid_lats = scene_1['80'].attrs['area'].lats.data
 grid_lons = scene_1['80'].attrs['area'].lons.data
 
