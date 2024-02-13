@@ -32,6 +32,57 @@ cube = cube.reshape((-1,image_height,image_width))
 
 
 
+def run_corrections(datacube, capture_config: dict):
+
+
+    calibration_coefficients_dict = get_calibration_coefficients_path(capture_config)
+
+    calibration_coefficients = get_coefficients_from_dict(calibration_coefficients_dict, 
+                                                                    capture_config)
+
+    datacube = get_calibrated_and_corrected_cube(capture_config, 
+                                                            datacube, 
+                                                            calibration_coefficients)
+
+
+    spectral_coefficients_file = get_spectral_coefficients_path()
+    
+    spectral_coefficients = get_coefficients_from_file(spectral_coefficients_file)
+
+
+    wavelengths = get_wavelength_list(spectral_coefficients)
+
+
+    return datacube, wavelengths, capture_config
+
+
+
+
+
+
+def get_wavelength_list(spectral_coefficients):
+    wavelengths = spectral_coefficients
+
+    # Round bands to nearest integer
+    wavelengths_rounded = []
+    for band in wavelengths:
+        wavelengths_rounded.append(round(band))
+
+    # If there are duplicates, round to 1 decimal
+    if len(set(wavelengths_rounded)) != 120:
+        wavelengths_rounded = []
+        for band in wavelengths:
+            wavelengths_rounded.append(round(band, 1))
+
+    # Fall back to naming sequentially
+    if len(wavelengths_rounded) != 120:
+        return [band for band in range(0,120)]
+
+    return wavelengths_rounded
+
+
+
+
 
 #a few functions copied from Marie's calibration code, should update to just use as a library
 
@@ -392,17 +443,6 @@ def destriping_correct_cube(cube, correction_coefficients_dict):
     # cube_delined[:, 1:] -= destriping_correction_matrix[:-1]
     cube_delined = cube * destriping_correction_matrix
     return cube_delined
-
-
-
-
-
-
-
-
-
-
-
 
 
 

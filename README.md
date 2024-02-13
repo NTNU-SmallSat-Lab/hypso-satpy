@@ -13,3 +13,15 @@
 - [Pyresample Geometry Definitions](https://pyresample.readthedocs.io/en/latest/howtos/geo_def.html)
 - [Resampling of Swath Data](https://pyresample.readthedocs.io/en/latest/howtos/swath.html)
 - [MultiScene](https://satpy.readthedocs.io/en/stable/multiscene.html)
+
+## Resources
+- Online tool for generating boundary boxes (bbox) for AreaDefinitions: [bboxfinder.com](http://bboxfinder.com)
+
+## Examples
+
+### HYPSO-1
+- See `write_composites.py`
+
+### Sentinel-3
+- [Reading OLCI data from Sentinel 3](https://nbviewer.org/github/pytroll/pytroll-examples/blob/main/satpy/OLCI%20L1B.ipynb)
+    - TODO: resampling Sentinel-3 and HYPSO using same AreaDefinition

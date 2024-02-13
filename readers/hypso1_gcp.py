@@ -46,15 +46,25 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         self.latitude_data = gr.latitudes
         self.longitude_data = gr.longitudes
 
+        # Flip or mirror image
+        #flip = fh_kwargs.get("flip", None)
+        #if flip is not None: 
+        #    if flip:
+        #        print('[INFO] Flipping capture ' + self.filename + ' in the cross track dimension.')
+        #        self.latitude_data = self.latitude_data[:, ::-1,]
+        #        self.longitude_data = self.longitude_data[:, ::-1,]
+
 
     def get_dataset(self, dataset_id, dataset_info):
 
         if dataset_id['name'] == 'latitude':
-            dataset = xr.DataArray(self.latitude_data, dims=["y", "x"])
+            latitude_data = self.latitude_data
+            dataset = xr.DataArray(latitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'latitude'
             return dataset
         elif dataset_id['name'] == 'longitude':
-            dataset = xr.DataArray(self.longitude_data, dims=["y", "x"])
+            longitude_data = self.longitude_data
+            dataset = xr.DataArray(longitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'longitude'
             return dataset
         else:
@@ -74,29 +84,6 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
 
 
 
-
-    
-
-    
-    def _calculate_poly_geo_coords_skimage(self, X, Y, lat_c, lon_c):
-        
-        #X = sum[j=0:order]( sum[i=0:j]( a_ji * x**(j - i) * y**i ))
-
-        #x.T = [a00 a10 a11 a20 a21 a22 ... ann
-        #   b00 b10 b11 b20 b21 b22 ... bnn c3]
-
-        #X = (( a_00 * x**(0 - 0) * y**0 ))
-        #(( a_10 * x**(1 - 0) * y**0 ))  +  (( a_11 * x**(1 - 1) * y**1 ))
-        #(( a_20 * x**(2 - 0) * y**0 ))  +  (( a_21 * x**(2 - 1) * y**1 )) 
-        #                                +  (( a_22 * x**(2 - 2) * y**2 ))
-    
-        c = lat_c
-        lat = c[0] + c[1]*X + c[2]*Y + c[3]*X**2 + c[4]*X*Y + c[5]*Y**2
-
-        c = lon_c
-        lon = c[0] + c[1]*X + c[2]*Y + c[3]*X**2 + c[4]*X*Y + c[5]*Y**2
-
-        return (lat, lon)
     
 
 

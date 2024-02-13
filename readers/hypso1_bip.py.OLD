@@ -14,8 +14,7 @@ import skimage
 from pyproj import CRS
 crs = CRS.from_epsg(4326)
 
-
-import correction.correction as correction
+#from hypso1_base import HYPSO1FileHandlerBase
 
 
 class HYPSO1INIFileHandler(BaseFileHandler):
@@ -28,9 +27,16 @@ class HYPSO1INIFileHandler(BaseFileHandler):
         self.platform_name = 'hypso1'
         self.sensor = "hsi"
 
+        #self.latitude_data = None
+        #self.longitude_data = None
+
+        #self.along_track_dim = None
+        #self.cross_track_dim = None
+        #self.spectral_dim = None
+
         filename = os.path.join(filename, 'capture_config.ini')
 
-        self.ini_capture_config = {}
+        self.info = {}
         with open(filename, "r") as file:
             for line in file:
                 key, value = line.strip().split(' = ')
@@ -48,11 +54,11 @@ class HYPSO1INIFileHandler(BaseFileHandler):
                         except ValueError:
                             pass  # Keep the value as a string if conversion fails
 
-                self.ini_capture_config[key] = value
+                self.info[key] = value
 
-        self.along_track_dim = self.ini_capture_config['frame_count']
-        self.cross_track_dim = self.ini_capture_config['row_count']
-        self.spectral_dim = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])
+        self.along_track_dim = self.info['frame_count']
+        self.cross_track_dim = self.info['row_count']
+        self.spectral_dim = int(self.info['column_count']/self.info['bin_factor'])
 
 
 
@@ -170,16 +176,14 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         self.sensor = "hypso1"
         self.target = filename_info['target']
 
-        # Check for the required reader and if it exists, return its index in the req_fh tuple
-        ini_fh_idx = next((index for index, obj in enumerate(req_fh) if isinstance(obj, HYPSO1INIFileHandler)), None)
+        self.along_track_dim = req_fh[0].along_track_dim
+        self.cross_track_dim = req_fh[0].cross_track_dim
+        self.spectral_dim = req_fh[0].spectral_dim
 
-        # Load ini_capture_config dict from INI file reader:
-        self.ini_capture_config = req_fh[ini_fh_idx].ini_capture_config
-
-        # Load dimensions
-        self.along_track_dim = req_fh[ini_fh_idx].along_track_dim
-        self.cross_track_dim = req_fh[ini_fh_idx].cross_track_dim
-        self.spectral_dim = req_fh[ini_fh_idx].spectral_dim
+        #print('Metadata derived from capture_config.ini:')
+        #print('Along track dimension: ' + str(along_track_dim))
+        #print('Cross track dimension: ' + str(cross_track_dim))
+        #print('Spectral dimension: ' + str(spectral_dim))
 
         # Order of dataset dimensions:
         # First dimension (Y): latitude
@@ -187,100 +191,92 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Third dimension (Z): band
 
         # Load raw datacube from .bip file
-        datacube = self._read_bip_file(self.filename)
+        self.datacube = self._read_bip_file(self.filename)
         
-        # Reshape datacube
-        # TODO: swap height and width. Note to self: In the calibration code, references to 'height' and 'width' are swapped. For example, whereas in this reader image_width is 120, in the calibration code image_height is 120.
-        datacube = datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
+        # TODO: swap height and width
+        # Note to self: In the calibration code, references to 'height' and 'width' are swapped. For example, whereas in this reader image_width is 120, in the calibration code image_height is 120.
+        #Backup: self.datacube = self.datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
+        self.datacube = self.datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
 
-        # Construct capture config dictionary
-        capture_config = self.construct_capture_config()
+        # ------ Calibration Hell -------:
+        import calibration.correction as correction
 
-        # Apply corrections to datacube
-        datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
+        # Copy info dict from INI:
+        self.info = req_fh[0].info
 
+        self.calibration_info = {}
+        self.calibration_info['bin_factor'] = self.info['bin_factor']
+        self.calibration_info['bin_x'] = self.info['bin_factor']
+        self.calibration_info['background_value'] = 8*self.info['bin_factor']
+        self.calibration_info['exp'] = self.info['exposure'] / 1000 # convert to seconds
+        self.calibration_info['image_height'] = self.info['row_count']
+        self.calibration_info['image_width'] = int(self.info['column_count']/self.info['bin_factor'])
+        self.calibration_info['frame_count'] = self.info['frame_count']
+        self.calibration_info['column_count'] = self.info['column_count']
+        self.calibration_info["x_start"] = self.info["aoi_x"]
+        self.calibration_info["x_stop"] = self.info["aoi_x"] + self.info["column_count"]
+        self.calibration_info["y_start"] = self.info["aoi_y"]
+        self.calibration_info["y_stop"] = self.info["aoi_y"] + self.info["row_count"]
 
-        # Flip or mirror image
-        #datacube = datacube[:, ::-1, :]
-        #flip = fh_kwargs.get("flip", None)
-        #if flip is not None: 
-        #    if flip:
-        #        print('[INFO] Flipping capture ' + self.filename + ' in the cross track dimension.')
-        #        datacube = datacube
-
-        self.datacube = datacube
-        self.wavelengths = wavelengths
-        self.capture_config = capture_config
-
-
-
-    def construct_capture_config(self):
-
-        '''
-        flags = 0x00000200
-        camera_ID = 1
-        frame_count = 956
-        exposure = 30.0063
-        fps = 22
-        row_count = 684
-        column_count = 1080
-        sample_divisor = 1
-        bin_factor = 9
-        aoi_x = 428
-        aoi_y = 266
-        gain = 0
-        temp_log_period_ms = 10000
-        '''
-
-        capture_config = {}
-        capture_config['aoi_x'] = self.ini_capture_config['aoi_x']
-        capture_config['aoi_y'] = self.ini_capture_config['aoi_y']
-        capture_config['background_value'] = 8*self.ini_capture_config['bin_factor']
-        capture_config['bin_factor'] = self.ini_capture_config['bin_factor']
-        capture_config['bin_x'] = self.ini_capture_config['bin_factor']
-        capture_config['camera_ID'] = self.ini_capture_config['camera_ID']
-        capture_config['column_count'] = self.ini_capture_config['column_count']
-        capture_config['exp'] = self.ini_capture_config['exposure'] / 1000 # convert to seconds
-        capture_config['flags'] = self.ini_capture_config['flags']
-        capture_config['format'] = 'ini'
-        capture_config['fps'] = self.ini_capture_config['fps']
-        capture_config['frame_count'] = self.ini_capture_config['frame_count']
-        capture_config['gain'] = self.ini_capture_config['gain']
-        capture_config['image_height'] = self.ini_capture_config['row_count']
-        capture_config['image_width'] = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])
-        capture_config['row_count'] = self.ini_capture_config['row_count']
-        capture_config['sample_divisor'] = self.ini_capture_config['sample_divisor']
-        capture_config['temp_log_period_ms'] = self.ini_capture_config['temp_log_period_ms']
-        capture_config["x_start"] = self.ini_capture_config["aoi_x"]
-        capture_config["x_stop"] = self.ini_capture_config["aoi_x"] + self.ini_capture_config["column_count"]
-        capture_config["y_start"] = self.ini_capture_config["aoi_y"]
-        capture_config["y_stop"] = self.ini_capture_config["aoi_y"] + self.ini_capture_config["row_count"]
-
-        standardDimensions = {
+        self.standardDimensions = {
             "nominal": 956,  # Along frame_count
             "wide": 1092  # Along image_height (row_count)
         }
 
-        if capture_config['frame_count'] == standardDimensions["nominal"]:
-            capture_config["capture_type"] = "nominal"
+        if self.info['frame_count'] == self.standardDimensions["nominal"]:
+            self.calibration_info["capture_type"] = "nominal"
 
-        elif capture_config['row_count'] == standardDimensions["wide"]:
-            capture_config["capture_type"] = "wide"
+        elif self.info['row_count'] == self.standardDimensions["wide"]:
+            self.calibration_info["capture_type"] = "wide"
 
         else:
-            capture_config["capture_type"] = "custom"
+            self.calibration_info["capture_type"] = "custom"
 
-        return capture_config
+        self.calibration_coefficients_dict = correction.get_calibration_coefficients_path(self.calibration_info)
+
+        self.calibration_coefficients = correction.get_coefficients_from_dict(self.calibration_coefficients_dict, 
+                                                                              self.calibration_info)
+
+        self.datacube = correction.get_calibrated_and_corrected_cube(self.calibration_info, 
+                                                                     self.datacube, 
+                                                                     self.calibration_coefficients)
 
 
+        self.spectral_coefficients_file = correction.get_spectral_coefficients_path()
+        
+        self.spectral_coefficients = correction.get_coefficients_from_file(self.spectral_coefficients_file)
 
+        self.wavelengths = self.spectral_coefficients
 
+        # Round bands to nearest integer
+        self.wavelengths_rounded = []
+        for band in self.wavelengths:
+            self.wavelengths_rounded.append(round(band))
 
+        # If there are duplicates, round to 1 decimal
+        if len(set(self.wavelengths_rounded)) != 120:
+            self.wavelengths_rounded = []
+            for band in self.wavelengths:
+                self.wavelengths_rounded.append(round(band, 1))
 
+        # Check length of wavelengths and wavelenghts_rounded list
+        if len(self.wavelengths) != 120:
+            # Replace the list with a new list of length 120 starting from 0
+            self.wavelengths = [band for band in range(0,120)]
+        if len(self.wavelengths_rounded) != 120:
+            # Replace the list with a new list of length 120 starting from 0
+            self.wavelengths_rounded = [band for band in range(0,120)]
+
+        # Flip or mirror image
+        flip = fh_kwargs.get("flip", None)
+        if flip is not None: 
+            if flip:
+                print('[INFO] Flipping capture ' + self.filename + ' in the cross track dimension.')
+                self.datacube = self.datacube[:, ::-1, :]
 
     def __getitem__(self, item):
         """Get item."""
-        return getattr(self.capture_config, item)
+        return getattr(self.calibration_info, item)
 
     @property
     def start_time(self):
@@ -298,22 +294,22 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         return 'test'
 
 
+
     def get_dataset(self, dataset_id, dataset_info):
+        
         try:
             if 0 <= int(dataset_id['name']) < 120:
-                dataset = self.datacube[:,:,int(dataset_id['name'])]
-                
-                # TODO: rename dimensions?
-                dataset = xr.DataArray(dataset, dims=["y", "x"])
-
-                dataset.attrs['time'] = self.filename_info['time']
-                dataset.attrs['capture_config'] = self.capture_config
-                
-                return dataset
+                self.dataset = self.datacube[:,:,int(dataset_id['name'])]
+                self.dataset = xr.DataArray(self.dataset, dims=["y", "x"])
+                self.dataset.attrs['time'] = self.filename_info['time']
+                self.dataset.attrs['calibration_info'] = self.calibration_info
+                return self.dataset
             else:
-                return None
+                self.dataset = None
+                return self.dataset
         except ValueError:
-            return None
+            self.dataset = None
+            return self.dataset
 
     
 
@@ -336,7 +332,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
                 'standard_name': 'sensor_band_identifier',
                 'coordinates': ['latitude', 'longitude'],
                 'units': "%",
-                'wavelength': self.wavelengths[band]
+                'wavelength': self.wavelengths_rounded[band]
             }
             #yield True, ds_info
             bands.append(ds_info)
@@ -362,6 +358,10 @@ class HYPSO1FootprintWKTFileHandler(BaseFileHandler):
 
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
         super().__init__(filename, filename_info, filetype_info)
+        
+        
+
+
 
         self.filename_info = filename_info
         self.platform_name = 'hypso1'

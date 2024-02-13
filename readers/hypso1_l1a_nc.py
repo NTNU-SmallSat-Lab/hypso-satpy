@@ -8,10 +8,6 @@ from satpy.readers.netcdf_utils import NetCDF4FileHandler
 # https://satpy.readthedocs.io/en/stable/api/satpy.readers.netcdf_utils.html
 
 
-from georeferencing import calculate_poly_geo_coords_skimage
-
-
-
 class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
     """HYPSO-1 L1a NetCDF files."""
 
@@ -27,8 +23,16 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
 
         self.collect_metadata(None, fh)
 
-        print(type(self.file_content))
-        print(self.file_content.keys())
+        #print(type(self.file_content))
+        #for key in self.file_content.keys():
+        #    print(key)
+        #print(self.file_content.keys())
+        #print(len(self.file_content.keys()))
+
+        key = 'metadata/capture_config/attr/aoi_x'
+        print(type(self.file_content[key]))
+        print(self.file_content[key])
+
 
         a = self.get_and_cache_npxr('products/Lt')
 
@@ -40,9 +44,68 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         #self.cross_track_dim = req_fh[0].cross_track_dim
         #self.spectral_dim = req_fh[0].spectral_dim
 
-    def __getitem__(self, item):
-        """Get item."""
-        return getattr(self.calibration_info, item)
+    def construct_capture_config(self, ini_capture_config: dict):
+
+        '''
+        flags = 0x00000200
+        camera_ID = 1
+        frame_count = 956
+        exposure = 30.0063
+        fps = 22
+        row_count = 684
+        column_count = 1080
+        sample_divisor = 1
+        bin_factor = 9
+        aoi_x = 428
+        aoi_y = 266
+        gain = 0
+        temp_log_period_ms = 10000
+        '''
+
+        #TODO: construct this dictionary
+
+        capture_config = {}
+        capture_config['aoi_x'] = self.file_content['metadata/capture_config/attr/aoi_x']
+        '''
+        capture_config['aoi_y'] = ini_capture_config['aoi_y']
+        capture_config['background_value'] = 8*ini_capture_config['bin_factor']
+        capture_config['bin_factor'] = ini_capture_config['bin_factor']
+        capture_config['bin_x'] = ini_capture_config['bin_factor']
+        capture_config['camera_ID'] = ini_capture_config['camera_ID']
+        capture_config['column_count'] = ini_capture_config['column_count']
+        capture_config['exp'] = ini_capture_config['exposure'] / 1000 # convert to seconds
+        capture_config['flags'] = ini_capture_config['flags']
+        capture_config['format'] = 'ini'
+        capture_config['fps'] = ini_capture_config['fps']
+        capture_config['frame_count'] = ini_capture_config['frame_count']
+        capture_config['gain'] = ini_capture_config['gain']
+        capture_config['image_height'] = ini_capture_config['row_count']
+        capture_config['image_width'] = int(ini_capture_config['column_count']/ini_capture_config['bin_factor'])
+        capture_config['row_count'] = ini_capture_config['row_count']
+        capture_config['sample_divisor'] = ini_capture_config['sample_divisor']
+        capture_config['temp_log_period_ms'] = ini_capture_config['temp_log_period_ms']
+        capture_config["x_start"] = ini_capture_config["aoi_x"]
+        capture_config["x_stop"] = ini_capture_config["aoi_x"] + ini_capture_config["column_count"]
+        capture_config["y_start"] = ini_capture_config["aoi_y"]
+        capture_config["y_stop"] = ini_capture_config["aoi_y"] + ini_capture_config["row_count"]
+
+        standardDimensions = {
+            "nominal": 956,  # Along frame_count
+            "wide": 1092  # Along image_height (row_count)
+        }
+
+        if capture_config['frame_count'] == standardDimensions["nominal"]:
+            capture_config["capture_type"] = "nominal"
+
+        elif capture_config['row_count'] == standardDimensions["wide"]:
+            capture_config["capture_type"] = "wide"
+
+        else:
+            capture_config["capture_type"] = "custom"
+
+        '''
+
+        return capture_config
 
     @property
     def start_time(self):
@@ -104,3 +167,11 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
     def _read_bip_file(self, filename):
 
         return np.fromfile(filename, dtype='uint16')
+    
+def print_nested_dict(d, indent=0):
+    for key, value in d.items():
+        if isinstance(value, dict):
+            print('  ' * indent + str(key) + ':')
+            print_nested_dict(value, indent + 1)
+        else:
+            print('  ' * indent + str(key) + ': ' + str(value))
