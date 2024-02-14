@@ -1,10 +1,11 @@
-import numpy as np
+
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""HYPSO-1 .POINTS File Reader """
+
 import xarray as xr
-
-
-
 from satpy.readers.file_handlers import BaseFileHandler
-
 import georeferencing.georeferencing as georeferencing
 
 class HYPSO1GCPPointsFileHandler(BaseFileHandler):
@@ -19,29 +20,22 @@ class HYPSO1GCPPointsFileHandler(BaseFileHandler):
 
         self.gcp_list = georeferencing.GCPList(filename)
 
-
-
-
 class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
     """HYPSO-1 GCP .points file reader that generates latitude and longitude arrays."""
 
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
         super().__init__(filename, filename_info, filetype_info)
         
-        
-        self.along_track_dim = req_fh[0].along_track_dim
-        self.cross_track_dim = req_fh[0].cross_track_dim
-        self.spectral_dim = req_fh[0].spectral_dim
-
         self.filename = filename
 
+        self.lines = req_fh[0].lines
+        self.samples = req_fh[0].samples
+        self.bands = req_fh[0].bands
+        
         self.latitude_data = None
         self.longitude_data = None
-
-        self.image_height = self.along_track_dim # row_count
-        self.image_width = self.cross_track_dim # column_count/bin_factor
         
-        gr = georeferencing.Georeferencer(self.filename, self.image_height, self.image_width)
+        gr = georeferencing.Georeferencer(self.filename, self.lines, self.samples)
 
         latitudes = gr.latitudes
         longitudes = gr.longitudes
@@ -58,9 +52,6 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         if flip is not None and flip: 
             self.latitude_data = self.latitude_data[:, ::-1]
             self.longitude_data = self.longitude_data[:, ::-1]
-            
-
-
 
     def get_dataset(self, dataset_id, dataset_info):
 
@@ -77,7 +68,6 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         else:
             dataset = None
             return dataset
-
 
     @property
     def start_time(self):

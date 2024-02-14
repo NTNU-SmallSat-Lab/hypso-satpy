@@ -5,8 +5,7 @@
 
 from satpy.readers.file_handlers import BaseFileHandler
 import os
-#from pyproj import CRS
-#crs = CRS.from_epsg(4326)
+
 
 class HYPSO1INIFileHandler(BaseFileHandler):
     """HYPSO-1 .ini files."""
@@ -39,7 +38,3 @@ class HYPSO1INIFileHandler(BaseFileHandler):
                             pass  # Keep the value as a string if conversion fails
 
                 self.ini_capture_config[key] = value
-
-        self.along_track_dim = self.ini_capture_config['frame_count']
-        self.cross_track_dim = self.ini_capture_config['row_count']
-        self.spectral_dim = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])
