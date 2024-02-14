@@ -14,7 +14,7 @@ from satpy.readers.netcdf_utils import NetCDF4FileHandler
 import correction.correction as correction
 
 
-class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
+class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
     """HYPSO-1 L1a NetCDF files."""
 
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
