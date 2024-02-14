@@ -199,8 +199,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Apply corrections to datacube
         datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
 
-        # Flip or mirror image
-        datacube = datacube[:, ::-1, :]
+
 
         self.datacube = datacube
         self.wavelengths = wavelengths

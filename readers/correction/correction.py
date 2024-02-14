@@ -53,6 +53,9 @@ def run_corrections(datacube, capture_config: dict):
     wavelengths = get_wavelength_list(spectral_coefficients)
 
 
+    # Mirror image to correct orientation
+    datacube = datacube[:, ::-1, :]
+
     return datacube, wavelengths, capture_config
 
 

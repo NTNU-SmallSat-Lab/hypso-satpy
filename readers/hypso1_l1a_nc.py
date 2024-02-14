@@ -39,6 +39,10 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         print(a.shape)
         print(a)
 
+        # Flip or mirror image
+        #datacube = datacube[:, ::-1, :]
+
+
         # TODO: set these for GCP reader
         #self.along_track_dim = req_fh[0].along_track_dim
         #self.cross_track_dim = req_fh[0].cross_track_dim
