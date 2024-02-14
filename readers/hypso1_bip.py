@@ -6,9 +6,7 @@
 import numpy as np
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
-
 import correction.correction as correction
-
 from hypso1_ini import HYPSO1INIFileHandler
 
 class HYPSO1BIPFileHandler(BaseFileHandler):
@@ -30,32 +28,17 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Load ini_capture_config dict from INI file reader:
         self.ini_capture_config = req_fh[ini_fh_idx].ini_capture_config
 
-        # Load dimensions
-        #self.along_track_dim = req_fh[ini_fh_idx].along_track_dim
-        #self.cross_track_dim = req_fh[ini_fh_idx].cross_track_dim
-        #self.spectral_dim = req_fh[ini_fh_idx].spectral_dim
-        #print('along_track: ' + str(self.along_track_dim))
-        #print('cross_track : ' + str(self.cross_track_dim))
-        #print('spectral : ' + str(self.spectral_dim))
-
         # Construct capture config dictionary
         capture_config = self.construct_capture_config()
-
-        print(capture_config)
 
         self.lines = capture_config['lines']
         self.samples = capture_config['samples']
         self.bands = capture_config['bands']
 
-        print(capture_config["lines"])
-        print(capture_config["samples"])
-        print(capture_config["bands"])
-
         # Load raw datacube from .bip file
         datacube = np.fromfile(self.filename, dtype='uint16')
         
         # Reshape datacube.
-        #datacube = datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
         datacube = datacube.reshape((-1, self.samples, self.bands))[:,:,::-1]
 
         # Apply corrections to datacube

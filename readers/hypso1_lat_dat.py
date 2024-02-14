@@ -23,10 +23,6 @@ class HYPSO1LatDatFileHandler(BaseFileHandler):
         self.samples = req_fh[0].samples
         self.bands = req_fh[0].bands
 
-        #self.along_track_dim = req_fh[0].along_track_dim
-        #self.cross_track_dim = req_fh[0].cross_track_dim
-        #self.spectral_dim = req_fh[0].spectral_dim
-
         self.latitude_data = None
 
         if self.filename.endswith("-latitudes.dat"):
