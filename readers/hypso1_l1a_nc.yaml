@@ -24,7 +24,7 @@ datasets:
 
 file_types:
     hypso1_l1a_nc:
-        file_reader: !!python/name:hypso-satpy.readers.hypso1_l1a_nc.HYPSO1L1ANCFileHandler
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_l1a_nc.HYPSO1L1aNCFileHandler
         file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-l1a.nc']
     hypso1_gcp_points_lat_lon:
         file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsLatLonFileHandler
