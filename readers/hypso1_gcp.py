@@ -43,8 +43,15 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         
         gr = georeferencing.Georeferencer(self.filename, self.image_height, self.image_width)
 
-        self.latitude_data = gr.latitudes
-        self.longitude_data = gr.longitudes
+        latitudes = gr.latitudes
+        longitudes = gr.longitudes
+
+        # Mirror image to correct orientation (moved to georeferencing)
+        #latitudes = latitudes[:,::-1]
+        #longitudes = longitudes[:,::-1]
+
+        self.latitude_data = latitudes
+        self.longitude_data = longitudes
 
         # Flip or mirror image
         flip = fh_kwargs.get("flip", None)

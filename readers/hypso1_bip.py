@@ -6,18 +6,15 @@
 import numpy as np
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
-import os
 from shapely.geometry import Polygon
 from shapely.wkt import loads
 import skimage
 
-from pyproj import CRS
-crs = CRS.from_epsg(4326)
-
-
 import correction.correction as correction
 
+from hypso1_ini import HYPSO1INIFileHandler
 
+'''
 class HYPSO1INIFileHandler(BaseFileHandler):
     """HYPSO-1 .ini files."""
 
@@ -53,7 +50,7 @@ class HYPSO1INIFileHandler(BaseFileHandler):
         self.along_track_dim = self.ini_capture_config['frame_count']
         self.cross_track_dim = self.ini_capture_config['row_count']
         self.spectral_dim = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])
-
+'''
 
 
 
@@ -171,7 +168,10 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         self.target = filename_info['target']
 
         # Check for the required reader and if it exists, return its index in the req_fh tuple
-        ini_fh_idx = next((index for index, obj in enumerate(req_fh) if isinstance(obj, HYPSO1INIFileHandler)), None)
+        #ini_fh_idx = next((index for index, obj in enumerate(req_fh) if isinstance(obj, HYPSO1INIFileHandler)), None)
+        
+        # Index of HYPSO1INIFileHandler in req_fh
+        ini_fh_idx = 0
 
         # Load ini_capture_config dict from INI file reader:
         self.ini_capture_config = req_fh[ini_fh_idx].ini_capture_config
@@ -199,7 +199,8 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Apply corrections to datacube
         datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
 
-
+        # Mirror image to correct orientation (moved to corrections)
+        #datacube = datacube[:, ::-1, :]
 
         self.datacube = datacube
         self.wavelengths = wavelengths

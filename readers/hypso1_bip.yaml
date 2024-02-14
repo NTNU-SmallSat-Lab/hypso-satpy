@@ -47,7 +47,7 @@ file_types:
         file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{time:%Y_%m_%dT%H_%M_%S}-bin3.points']
         requires: [hypso1_ini]
     hypso1_ini:
-        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1INIFileHandler
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_ini.HYPSO1INIFileHandler
         file_patterns: ['{target}_{time:%Y_%m_%dT%H_%M_%S}-hsi0', '{target}_{time:%Y-%m-%d_%H%MZ}-hsi0']
         #file_patterns: ['capture_config.ini', '{capture}-hsi0/capture_config.ini']
         #file_patterns: ['{capture}-hsi0/capture_config.ini']
