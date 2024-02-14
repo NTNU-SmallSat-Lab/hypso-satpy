@@ -167,10 +167,9 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         self.sensor = "hypso1"
         self.target = filename_info['target']
 
+        # Get index of HYPSO1INIFileHandler in req_fh
         # Check for the required reader and if it exists, return its index in the req_fh tuple
         #ini_fh_idx = next((index for index, obj in enumerate(req_fh) if isinstance(obj, HYPSO1INIFileHandler)), None)
-        
-        # Index of HYPSO1INIFileHandler in req_fh
         ini_fh_idx = 0
 
         # Load ini_capture_config dict from INI file reader:
@@ -201,6 +200,9 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         # Mirror image to correct orientation (moved to corrections)
         #datacube = datacube[:, ::-1, :]
+
+        # Convert datacube from float64 to float16
+        datacube = datacube.astype('float16')
 
         self.datacube = datacube
         self.wavelengths = wavelengths
