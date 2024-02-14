@@ -38,11 +38,11 @@ def run_corrections(datacube, capture_config: dict):
     calibration_coefficients_dict = get_calibration_coefficients_path(capture_config)
 
     calibration_coefficients = get_coefficients_from_dict(calibration_coefficients_dict, 
-                                                                    capture_config)
+                                                        capture_config)
 
     datacube = get_calibrated_and_corrected_cube(capture_config, 
-                                                            datacube, 
-                                                            calibration_coefficients)
+                                                datacube, 
+                                                calibration_coefficients)
 
 
     spectral_coefficients_file = get_spectral_coefficients_path()

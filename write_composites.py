@@ -54,9 +54,9 @@ area_extent = list(bbox)
 area_def = geometry.AreaDefinition(area_id, proj_id, description, projection,  width, height, area_extent)
 
 # Writing Area Definitions: https://pyresample.readthedocs.io/en/stable/howtos/geometry_utils.html#writing-to-disk
-filename = os.path.join('.', 'areas', area_id + '.yaml')
-with open(filename, 'w') as file:
-    file.write(area_def.dump())
+#filename = os.path.join('.', 'areas', area_id + '.yaml')
+#with open(filename, 'w') as file:
+#    file.write(area_def.dump())
 
 # Reading Area Definitions: https://satpy.readthedocs.io/en/stable/resample.html#store-area-definitions
 #from pyresample import load_area

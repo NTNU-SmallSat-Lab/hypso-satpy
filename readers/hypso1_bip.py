@@ -7,23 +7,9 @@ import numpy as np
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
 
-
 import correction.correction as correction
 
 from hypso1_ini import HYPSO1INIFileHandler
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 class HYPSO1BIPFileHandler(BaseFileHandler):
     """HYPSO-1 .bip files."""
@@ -45,24 +31,33 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         self.ini_capture_config = req_fh[ini_fh_idx].ini_capture_config
 
         # Load dimensions
-        self.along_track_dim = req_fh[ini_fh_idx].along_track_dim
-        self.cross_track_dim = req_fh[ini_fh_idx].cross_track_dim
-        self.spectral_dim = req_fh[ini_fh_idx].spectral_dim
-
-        # Order of dataset dimensions:
-        # First dimension (Y): latitude
-        # Second dimension (X): longitude
-        # Third dimension (Z): band
-
-        # Load raw datacube from .bip file
-        datacube = self._read_bip_file(self.filename)
-        
-        # Reshape datacube
-        # TODO: swap height and width. Note to self: In the calibration code, references to 'height' and 'width' are swapped. For example, whereas in this reader image_width is 120, in the calibration code image_height is 120.
-        datacube = datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
+        #self.along_track_dim = req_fh[ini_fh_idx].along_track_dim
+        #self.cross_track_dim = req_fh[ini_fh_idx].cross_track_dim
+        #self.spectral_dim = req_fh[ini_fh_idx].spectral_dim
+        #print('along_track: ' + str(self.along_track_dim))
+        #print('cross_track : ' + str(self.cross_track_dim))
+        #print('spectral : ' + str(self.spectral_dim))
 
         # Construct capture config dictionary
         capture_config = self.construct_capture_config()
+
+        print(capture_config)
+
+        self.lines = capture_config['lines']
+        self.samples = capture_config['samples']
+        self.bands = capture_config['bands']
+
+        print(capture_config["lines"])
+        print(capture_config["samples"])
+        print(capture_config["bands"])
+
+        # Load raw datacube from .bip file
+        datacube = np.fromfile(self.filename, dtype='uint16')
+        
+        # Reshape datacube
+        # TODO: swap height and width. Note to self: In the calibration code, references to 'height' and 'width' are swapped. For example, whereas in this reader image_width is 120, in the calibration code image_height is 120.
+        #datacube = datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
+        datacube = datacube.reshape((-1, self.samples, self.bands))[:,:,::-1]
 
         # Apply corrections to datacube
         datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
@@ -72,6 +67,8 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         # Convert datacube from float64 to float16
         datacube = datacube.astype('float16')
+
+
 
         self.datacube = datacube
         self.wavelengths = wavelengths
@@ -121,6 +118,11 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         capture_config["y_start"] = self.ini_capture_config["aoi_y"]
         capture_config["y_stop"] = self.ini_capture_config["aoi_y"] + self.ini_capture_config["row_count"]
 
+        # Set dimensions
+        capture_config["lines"] = self.ini_capture_config["frame_count"]
+        capture_config["samples"] = self.ini_capture_config["row_count"]
+        capture_config["bands"] = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])
+
         standardDimensions = {
             "nominal": 956,  # Along frame_count
             "wide": 1092  # Along image_height (row_count)
@@ -134,6 +136,9 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         else:
             capture_config["capture_type"] = "custom"
+
+
+
 
         return capture_config
 
@@ -192,10 +197,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         for c in combined:
             yield True, c
-
-    def _read_bip_file(self, filename):
-
-        return np.fromfile(filename, dtype='uint16')
 
 
 
