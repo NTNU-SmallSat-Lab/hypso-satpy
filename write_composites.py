@@ -80,7 +80,7 @@ img = to_image(composite[:,:,::-1])
 img.invert([False, False, False])
 img.stretch("linear")
 img.gamma([gamma, gamma, gamma])
-img.save('scene1.png')
+img.save('./composites/scene1.png')
 
 s = scene_2
 compositor = GenericCompositor("overview")
@@ -90,7 +90,7 @@ img = to_image(composite)
 img.invert([False, False, False])
 img.stretch("linear")
 img.gamma([gamma, gamma, gamma])
-img.save('scene2.png')
+img.save('./composites/scene2.png')
 
 
 # Resampled capture composites
@@ -102,7 +102,7 @@ img = to_image(composite)
 img.invert([False, False, False])
 img.stretch("linear")
 img.gamma([gamma, gamma, gamma])
-img.save('scene1_resampled.png')
+img.save('./composites/resampled_scene1.png')
 
 s = local_scene_2
 compositor = GenericCompositor("overview")
@@ -111,7 +111,7 @@ img = to_image(composite)
 img.invert([False, False, False])
 img.stretch("linear")
 img.gamma([gamma, gamma, gamma])
-img.save('scene2_resampled.png')
+img.save('./composites/resampled_scene2.png')
 
 
 
