@@ -23,10 +23,10 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Get index of HYPSO1INIFileHandler in req_fh
         # Check for the required reader and if it exists, return its index in the req_fh tuple
         #ini_fh_idx = next((index for index, obj in enumerate(req_fh) if isinstance(obj, HYPSO1INIFileHandler)), None)
-        ini_fh_idx = 0
+        #ini_fh_idx = 0
 
         # Load ini_capture_config dict from INI file reader:
-        self.ini_capture_config = req_fh[ini_fh_idx].ini_capture_config
+        self.ini_capture_config = req_fh[0].ini_capture_config
 
         # Construct capture config dictionary
         capture_config = self.construct_capture_config()
@@ -42,7 +42,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         datacube = datacube.reshape((-1, self.samples, self.bands))[:,:,::-1]
 
         # Apply corrections to datacube
-        datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
+        datacube, wavelengths = correction.run_corrections(datacube, capture_config)
 
         # Mirror image to correct orientation (moved to corrections)
         #datacube = datacube[:, ::-1, :]
