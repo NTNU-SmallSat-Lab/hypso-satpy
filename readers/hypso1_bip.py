@@ -249,12 +249,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
     def end_time(self):
         """End timestamp of the dataset."""
         return self.filename_info['time']
-    
-    @property
-    def testing(self):
-        """End timestamp of the dataset."""
-        return 'test'
-
 
     def get_dataset(self, dataset_id, dataset_info):
         try:

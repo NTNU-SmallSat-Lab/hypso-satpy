@@ -29,23 +29,11 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
 
         self.collect_metadata(None, fh)
 
-        #print(type(self.file_content))
-        #for key in self.file_content.keys():
-        #    print(key)
-        #print(self.file_content.keys())
-        #print(len(self.file_content.keys()))
+        # Load datacube as xarray
+        datacube = self.get_and_cache_npxr('products/Lt')
 
-        #key = 'metadata/capture_config/attr/aoi_x'
-        #print(type(self.file_content[key]))
-        #print(self.file_content[key])
-
-
-        a = self.get_and_cache_npxr('products/Lt')
-        print(a.dims)
-        datacube = a.to_numpy()
-        print(a)
-
-        print(datacube.shape)
+        # Convert xarray datacube to numpy datacube
+        datacube = datacube.to_numpy()
 
         # Construct capture config dictionary
         capture_config = self.construct_capture_config()
