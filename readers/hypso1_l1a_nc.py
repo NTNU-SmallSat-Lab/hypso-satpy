@@ -1,11 +1,17 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""HYPSO-1 NetCDF File Reader """
+
+# This reader relies on the satpy netcdf_utils module
+# https://satpy.readthedocs.io/en/stable/api/satpy.readers.netcdf_utils.html
 
 import numpy as np
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
 from satpy.readers.netcdf_utils import NetCDF4FileHandler
 
-# This reader relies on the satpy netcdf_utils module
-# https://satpy.readthedocs.io/en/stable/api/satpy.readers.netcdf_utils.html
+import correction.correction as correction
 
 
 class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
@@ -29,26 +35,38 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         #print(self.file_content.keys())
         #print(len(self.file_content.keys()))
 
-        key = 'metadata/capture_config/attr/aoi_x'
-        print(type(self.file_content[key]))
-        print(self.file_content[key])
+        #key = 'metadata/capture_config/attr/aoi_x'
+        #print(type(self.file_content[key]))
+        #print(self.file_content[key])
 
 
         a = self.get_and_cache_npxr('products/Lt')
-
-        print(a.shape)
+        print(a.dims)
+        datacube = a.to_numpy()
         print(a)
 
-        # Flip or mirror image
+        print(datacube.shape)
+
+        # Construct capture config dictionary
+        capture_config = self.construct_capture_config()
+
+        # Apply corrections to datacube
+        datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
+
+        # Mirror image to correct orientation (moved to corrections)
         #datacube = datacube[:, ::-1, :]
 
+        # Convert datacube from float64 to float16
+        datacube = datacube.astype('float16')
 
-        # TODO: set these for GCP reader
-        #self.along_track_dim = req_fh[0].along_track_dim
-        #self.cross_track_dim = req_fh[0].cross_track_dim
-        #self.spectral_dim = req_fh[0].spectral_dim
+        print(datacube.shape)
 
-    def construct_capture_config(self, ini_capture_config: dict):
+        self.datacube = datacube
+        self.wavelengths = wavelengths
+        self.capture_config = capture_config
+
+
+    def construct_capture_config(self):
 
         '''
         flags = 0x00000200
@@ -66,32 +84,29 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         temp_log_period_ms = 10000
         '''
 
-        #TODO: construct this dictionary
-
         capture_config = {}
         capture_config['aoi_x'] = self.file_content['metadata/capture_config/attr/aoi_x']
-        '''
-        capture_config['aoi_y'] = ini_capture_config['aoi_y']
-        capture_config['background_value'] = 8*ini_capture_config['bin_factor']
-        capture_config['bin_factor'] = ini_capture_config['bin_factor']
-        capture_config['bin_x'] = ini_capture_config['bin_factor']
-        capture_config['camera_ID'] = ini_capture_config['camera_ID']
-        capture_config['column_count'] = ini_capture_config['column_count']
-        capture_config['exp'] = ini_capture_config['exposure'] / 1000 # convert to seconds
-        capture_config['flags'] = ini_capture_config['flags']
-        capture_config['format'] = 'ini'
-        capture_config['fps'] = ini_capture_config['fps']
-        capture_config['frame_count'] = ini_capture_config['frame_count']
-        capture_config['gain'] = ini_capture_config['gain']
-        capture_config['image_height'] = ini_capture_config['row_count']
-        capture_config['image_width'] = int(ini_capture_config['column_count']/ini_capture_config['bin_factor'])
-        capture_config['row_count'] = ini_capture_config['row_count']
-        capture_config['sample_divisor'] = ini_capture_config['sample_divisor']
-        capture_config['temp_log_period_ms'] = ini_capture_config['temp_log_period_ms']
-        capture_config["x_start"] = ini_capture_config["aoi_x"]
-        capture_config["x_stop"] = ini_capture_config["aoi_x"] + ini_capture_config["column_count"]
-        capture_config["y_start"] = ini_capture_config["aoi_y"]
-        capture_config["y_stop"] = ini_capture_config["aoi_y"] + ini_capture_config["row_count"]
+        capture_config['aoi_y'] = self.file_content['metadata/capture_config/attr/aoi_y']
+        capture_config['background_value'] = 8*self.file_content['metadata/capture_config/attr/bin_factor']
+        capture_config['bin_factor'] = self.file_content['metadata/capture_config/attr/bin_factor']
+        capture_config['bin_x'] = self.file_content['metadata/capture_config/attr/bin_factor']
+        capture_config['camera_ID'] = self.file_content['metadata/capture_config/attr/camID']
+        capture_config['column_count'] = self.file_content['metadata/capture_config/attr/column_count']
+        capture_config['exp'] = self.file_content['metadata/capture_config/attr/exposure'] / 1000 # convert to seconds
+        capture_config['flags'] = self.file_content['metadata/capture_config/attr/flags']
+        capture_config['format'] = self.file_content['metadata/capture_config/attr/format']
+        capture_config['fps'] = self.file_content['metadata/capture_config/attr/fps']
+        capture_config['frame_count'] = self.file_content['metadata/capture_config/attr/frame_count']
+        capture_config['gain'] = self.file_content['metadata/capture_config/attr/gain']
+        capture_config['image_height'] = self.file_content['metadata/capture_config/attr/row_count']
+        capture_config['image_width'] = int(self.file_content['metadata/capture_config/attr/column_count']/self.file_content['metadata/capture_config/attr/bin_factor'])
+        capture_config['row_count'] = self.file_content['metadata/capture_config/attr/row_count']
+        capture_config['sample_divisor'] = self.file_content['metadata/capture_config/attr/sample_div']
+        #capture_config['temp_log_period_ms'] = 
+        capture_config["x_start"] = self.file_content["metadata/capture_config/attr/aoi_x"]
+        capture_config["x_stop"] = self.file_content["metadata/capture_config/attr/aoi_x"] + self.file_content["metadata/capture_config/attr/column_count"]
+        capture_config["y_start"] = self.file_content["metadata/capture_config/attr/aoi_y"]
+        capture_config["y_stop"] = self.file_content["metadata/capture_config/attr/aoi_y"] + self.file_content["metadata/capture_config/attr/row_count"]
 
         standardDimensions = {
             "nominal": 956,  # Along frame_count
@@ -107,7 +122,6 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         else:
             capture_config["capture_type"] = "custom"
 
-        '''
 
         return capture_config
 
