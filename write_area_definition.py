@@ -6,10 +6,11 @@ from pyresample import geometry
 import os
 
 bbox = (-83.534546,41.356196,-82.359009,42.706660) # W. Lake Erie
+bbox = (13.364868,77.401491,17.265015,77.915669) # Van Mijenfjorden
 
 print(bbox)
 
-area_id = 'western_lake_erie'
+area_id = 'van_mijenfjorden'
 proj_id = 'roi'
 description = 'roi'
 projection = CRS.from_epsg(4326)

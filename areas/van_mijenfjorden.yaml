@@ -1,0 +1,10 @@
+van_mijenfjorden:
+  description: roi
+  projection:
+    EPSG: 4326
+  shape:
+    height: 1000
+    width: 500
+  area_extent:
+    lower_left_xy: [13.364868, 77.401491]
+    upper_right_xy: [17.265015, 77.915669]
