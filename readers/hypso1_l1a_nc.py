@@ -39,13 +39,17 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         capture_config = self.construct_capture_config()
 
         # Apply corrections to datacube
-        datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
+        datacube, wavelengths = correction.run_corrections(datacube, capture_config)
 
         # Mirror image to correct orientation (moved to corrections)
         #datacube = datacube[:, ::-1, :]
 
         # Convert datacube from float64 to float16
         datacube = datacube.astype('float16')
+
+        self.lines = capture_config['lines']
+        self.samples = capture_config['samples']
+        self.bands = capture_config['bands']
 
         self.datacube = datacube
         self.wavelengths = wavelengths
@@ -93,6 +97,11 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         capture_config["x_stop"] = self.file_content["metadata/capture_config/attr/aoi_x"] + self.file_content["metadata/capture_config/attr/column_count"]
         capture_config["y_start"] = self.file_content["metadata/capture_config/attr/aoi_y"]
         capture_config["y_stop"] = self.file_content["metadata/capture_config/attr/aoi_y"] + self.file_content["metadata/capture_config/attr/row_count"]
+
+        # Set dimensions
+        capture_config["lines"] = self.file_content["metadata/capture_config/attr/frame_count"]
+        capture_config["samples"] = self.file_content["metadata/capture_config/attr/row_count"]
+        capture_config["bands"] = int(self.file_content['metadata/capture_config/attr/column_count']/self.file_content['metadata/capture_config/attr/bin_factor'])
 
         standardDimensions = {
             "nominal": 956,  # Along frame_count

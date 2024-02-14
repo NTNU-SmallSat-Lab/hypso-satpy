@@ -56,7 +56,7 @@ def run_corrections(datacube, capture_config: dict):
     # Mirror image to correct orientation
     datacube = datacube[:, ::-1, :]
 
-    return datacube, wavelengths, capture_config
+    return datacube, wavelengths
 
 
 
