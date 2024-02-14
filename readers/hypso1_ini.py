@@ -40,6 +40,7 @@ class HYPSO1INIFileHandler(BaseFileHandler):
 
                 self.ini_capture_config[key] = value
 
+        # TODO: remove following three lines
         self.along_track_dim = self.ini_capture_config['frame_count']
         self.cross_track_dim = self.ini_capture_config['row_count']
         self.spectral_dim = int(self.ini_capture_config['column_count']/self.ini_capture_config['bin_factor'])

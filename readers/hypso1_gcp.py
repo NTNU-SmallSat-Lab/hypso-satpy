@@ -28,20 +28,32 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
         super().__init__(filename, filename_info, filetype_info)
         
-        
-        self.along_track_dim = req_fh[0].along_track_dim
-        self.cross_track_dim = req_fh[0].cross_track_dim
-        self.spectral_dim = req_fh[0].spectral_dim
-
         self.filename = filename
+
+        self.lines = req_fh[0].lines
+        self.samples = req_fh[0].samples
+        self.bands = req_fh[0].bands
+        
+        #self.lines = capture_config['lines']
+        #self.samples = capture_config['samples']
+        #self.bands = capture_config['bands']
+
+        #self.along_track_dim = req_fh[0].along_track_dim
+        #self.cross_track_dim = req_fh[0].cross_track_dim
+        #self.spectral_dim = req_fh[0].spectral_dim
+
+
 
         self.latitude_data = None
         self.longitude_data = None
 
-        self.image_height = self.along_track_dim # row_count
-        self.image_width = self.cross_track_dim # column_count/bin_factor
+        #self.image_height = self.along_track_dim # row_count
+        #self.image_width = self.cross_track_dim # column_count/bin_factor
+
+        #self.image_height = self.lines # row_count
+        #self.image_width = self.samples # column_count/bin_factor
         
-        gr = georeferencing.Georeferencer(self.filename, self.image_height, self.image_width)
+        gr = georeferencing.Georeferencer(self.filename, self.lines, self.samples)
 
         latitudes = gr.latitudes
         longitudes = gr.longitudes

@@ -54,8 +54,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Load raw datacube from .bip file
         datacube = np.fromfile(self.filename, dtype='uint16')
         
-        # Reshape datacube
-        # TODO: swap height and width. Note to self: In the calibration code, references to 'height' and 'width' are swapped. For example, whereas in this reader image_width is 120, in the calibration code image_height is 120.
+        # Reshape datacube.
         #datacube = datacube.reshape((-1, self.cross_track_dim, self.spectral_dim))[:,:,::-1]
         datacube = datacube.reshape((-1, self.samples, self.bands))[:,:,::-1]
 
@@ -67,8 +66,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         # Convert datacube from float64 to float16
         datacube = datacube.astype('float16')
-
-
 
         self.datacube = datacube
         self.wavelengths = wavelengths
@@ -136,9 +133,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
 
         else:
             capture_config["capture_type"] = "custom"
-
-
-
 
         return capture_config
 
