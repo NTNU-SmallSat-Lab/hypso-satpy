@@ -31,15 +31,15 @@ file_types:
         modifiers: 
         requires: [hypso1_ini]
     hypso1_lat_dat:
-        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1LatDatFileHandler
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_lat_dat.HYPSO1LatDatFileHandler
         file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-latitudes.dat']
         requires: [hypso1_ini]
     hypso1_lon_dat:
-        file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1LonDatFileHandler
+        file_reader: !!python/name:hypso-satpy.readers.hypso1_lon_dat.HYPSO1LonDatFileHandler
         file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-longitudes.dat']
         requires: [hypso1_ini]
     #hypso1_footprint_wkt:
-    #    file_reader: !!python/name:hypso-satpy.readers.hypso1_bip.HYPSO1FootprintWKTFileHandler
+    #    file_reader: !!python/name:hypso-satpy.readers.hypso1_wkt.HYPSO1FootprintWKTFileHandler
     #    file_patterns: ['{target}_{time:%Y-%m-%d_%H%MZ}-footprint-wkt.txt', '{target}_{time:%Y_%m_%dT%H_%M_%S}-footprint-wkt.txt']
     hypso1_gcp_points_lat_lon:
         file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsLatLonFileHandler

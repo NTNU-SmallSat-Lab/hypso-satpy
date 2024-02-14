@@ -166,7 +166,5 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         for c in combined:
             yield True, c
 
-    def _read_bip_file(self, filename):
 
-        return np.fromfile(filename, dtype='uint16')
     
