@@ -199,14 +199,8 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Apply corrections to datacube
         datacube, wavelengths, capture_config = correction.run_corrections(datacube, capture_config)
 
-
         # Flip or mirror image
         datacube = datacube[:, ::-1, :]
-        #flip = fh_kwargs.get("flip", None)
-        #if flip is not None: 
-        #    if flip:
-        #        print('[INFO] Flipping capture ' + self.filename + ' in the cross track dimension.')
-        #        datacube = datacube
 
         self.datacube = datacube
         self.wavelengths = wavelengths

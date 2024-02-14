@@ -31,12 +31,14 @@ scene_2.load(['latitude', 'longitude', '80', '40', '15'])
 grid_lats = scene_1['80'].attrs['area'].lats.data
 grid_lons = scene_1['80'].attrs['area'].lons.data
 
+# Is there a function that can do this? Possibly in pyresample.
 lon_min = grid_lons.min()
 lon_max = grid_lons.max()
 lat_min = grid_lats.min()
 lat_max = grid_lats.max()
 
 bbox = (lon_min,lat_min,lon_max,lat_max)
+bbox = (-83.534546,41.356196,-82.359009,42.706660) # W. Lake Erie
 
 print(bbox)
 
@@ -44,8 +46,8 @@ area_id = 'western_lake_erie'
 proj_id = 'roi'
 description = 'roi'
 projection = CRS.from_epsg(4326)
-width = 600
-height = 1800
+width = 500
+height = 1000
 area_extent = list(bbox)
 
 # Define area definition

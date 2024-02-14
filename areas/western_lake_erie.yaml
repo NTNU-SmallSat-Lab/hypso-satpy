@@ -3,8 +3,8 @@ western_lake_erie:
   projection:
     EPSG: 4326
   shape:
-    height: 1800
-    width: 600
+    height: 1000
+    width: 500
   area_extent:
-    lower_left_xy: [-83.67992487916133, 41.498003649245746]
-    upper_right_xy: [-82.14908531559405, 44.27169035658254]
+    lower_left_xy: [-83.534546, 41.356196]
+    upper_right_xy: [-82.359009, 42.70666]
