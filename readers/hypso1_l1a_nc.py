@@ -47,8 +47,6 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         # Convert datacube from float64 to float16
         datacube = datacube.astype('float16')
 
-        print(datacube.shape)
-
         self.datacube = datacube
         self.wavelengths = wavelengths
         self.capture_config = capture_config
@@ -113,6 +111,10 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
 
         return capture_config
 
+    def __getitem__(self, item):
+        """Get item."""
+        return getattr(self.capture_config, item)
+
     @property
     def start_time(self):
         """Start timestamp of the dataset."""
@@ -123,23 +125,18 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
         """End timestamp of the dataset."""
         return self.filename_info['time']
 
-
     def get_dataset(self, dataset_id, dataset_info):
-        
         try:
             if 0 <= int(dataset_id['name']) < 120:
-                self.dataset = self.datacube[:,:,int(dataset_id['name'])]
-                self.dataset = xr.DataArray(self.dataset, dims=["y", "x"])
-                self.dataset.attrs['time'] = self.filename_info['time']
-                self.dataset.attrs['calibration_info'] = self.calibration_info
-                return self.dataset
+                dataset = self.datacube[:,:,int(dataset_id['name'])]
+                dataset = xr.DataArray(dataset, dims=["y", "x"])
+                dataset.attrs['time'] = self.filename_info['time']
+                dataset.attrs['capture_config'] = self.capture_config
+                return dataset
             else:
-                self.dataset = None
-                return self.dataset
+                return None
         except ValueError:
-            self.dataset = None
-            return self.dataset
-
+            return None
     
     def available_datasets(self, configured_datasets=None):
         #"Add information to configured datasets."
@@ -159,11 +156,10 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
                 'standard_name': 'sensor_band_identifier',
                 'coordinates': ['latitude', 'longitude'],
                 'units': "%",
-                'wavelength': 1 #self.wavelengths_rounded[band]
+                'wavelength': self.wavelengths[band]
             }
             #yield True, ds_info
             bands.append(ds_info)
-
 
         combined = variables + bands
 
@@ -174,10 +170,3 @@ class HYPSO1L1ANCFileHandler(NetCDF4FileHandler):
 
         return np.fromfile(filename, dtype='uint16')
     
-def print_nested_dict(d, indent=0):
-    for key, value in d.items():
-        if isinstance(value, dict):
-            print('  ' * indent + str(key) + ':')
-            print_nested_dict(value, indent + 1)
-        else:
-            print('  ' * indent + str(key) + ': ' + str(value))

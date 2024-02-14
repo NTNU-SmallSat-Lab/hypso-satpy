@@ -231,11 +231,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         return capture_config
 
 
-
-
-
-
-
     def __getitem__(self, item):
         """Get item."""
         return getattr(self.capture_config, item)
@@ -254,21 +249,14 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         try:
             if 0 <= int(dataset_id['name']) < 120:
                 dataset = self.datacube[:,:,int(dataset_id['name'])]
-                
-                # TODO: rename dimensions?
                 dataset = xr.DataArray(dataset, dims=["y", "x"])
-
                 dataset.attrs['time'] = self.filename_info['time']
                 dataset.attrs['capture_config'] = self.capture_config
-                
                 return dataset
             else:
                 return None
         except ValueError:
             return None
-
-    
-
 
     def available_datasets(self, configured_datasets=None):
         #"Add information to configured datasets."
@@ -292,7 +280,6 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
             }
             #yield True, ds_info
             bands.append(ds_info)
-
 
         combined = variables + bands
 

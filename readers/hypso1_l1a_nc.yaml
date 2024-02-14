@@ -14,13 +14,13 @@ datasets:
     name: longitude
     standard_name: longitude
     units: degrees_east
-    file_type: [hypso1_gcp_points, hypso1_l1a_nc]
+    file_type: [hypso1_gcp_points]
 
   latitude:
     name: latitude
     standard_name: latitude
     units: degrees_north
-    file_type: [hypso1_gcp_points, hypso1_l1a_nc]
+    file_type: [hypso1_gcp_points]
 
 file_types:
     hypso1_l1a_nc:
