@@ -11,6 +11,8 @@ from satpy.composites import GenericCompositor
 from satpy.writers import to_image
 import os
 
+from glob import glob
+
 sys.path.insert(0,'/home/cameron/Projects/')
 
 #print(satpy.config.to_dict())
@@ -20,11 +22,11 @@ sys.path.insert(0,'/home/cameron/Projects/')
 files_1 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/erie_2022-08-27_1605Z-l1a", reader='hypso1_l1a_nc')
 files_2 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/erie_2023-03-01_1559Z-l1a", reader='hypso1_l1a_nc')
 files_3 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/erie_2023-05-17_1553Z-l1a", reader='hypso1_l1a_nc')
+files_3 = glob('/home/cameron/Dokumenter/Data/svalbardeidembukta/svalbardeidembukta_2023-03-14_14*')
 
-
-scene_1 = Scene(filenames=files_1, reader_kwargs={'flip': True})
-scene_2 = Scene(filenames=files_2)
-scene_3 = Scene(filenames=files_3)
+scene_1 = Scene(filenames=files_1, reader='hypso1_l1a_nc', reader_kwargs={'flip': True})
+scene_2 = Scene(filenames=files_2, reader='hypso1_l1a_nc')
+scene_3 = Scene(filenames=files_3, reader='hypso1_l1a_nc', reader_kwargs={'flip': True})
 #scene_1 = Scene(filenames=files_1, reader_kwargs={'flip': True})
 
 datasets_1 = scene_1.available_dataset_names()
@@ -53,7 +55,7 @@ def get_area(scene):
 
     bbox = (lon_min,lat_min,lon_max,lat_max)
     #bbox = (-83.534546,41.356196,-82.359009,42.706660) # W. Lake Erie
-    bbox = (-83.534546,41.356196,-81.359009,42.706660) # W. Lake Erie
+    #bbox = (-83.534546,41.356196,-81.359009,42.706660) # W. Lake Erie
 
     print(bbox)
 
@@ -80,6 +82,8 @@ area_def_3 = get_area(scene_3)
 local_scene_1 = scene_1.resample(area_def_1, resampler='bilinear', fill_value=np.NaN)
 local_scene_2 = scene_2.resample(area_def_2, resampler='bilinear', fill_value=np.NaN)
 local_scene_3 = scene_3.resample(area_def_3, resampler='bilinear', fill_value=np.NaN)
+
+local_scene_3.save_datasets(writer='geotiff')
 
 
 

@@ -15,4 +15,8 @@ import datetime
 
 sys.path.insert(0,'/home/cameron/Projects/')
 
-files_1 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/combined", reader='hypso1_l1a_nc')# start_time=datetime.datetime(2023, 3, 1, 15, 59))
+from glob import glob
+
+scene_1 = Scene(filenames=glob('/home/cameron/Dokumenter/Data/svalbardeidembukta/svalbardeidembukta_2023-03-25_*'), reader='hypso1_l1a_nc')
+
+
