@@ -48,10 +48,10 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         self.longitude_data = longitudes
 
         # Flip or mirror image
-        flip = fh_kwargs.get("flip", None)
-        if flip is not None and flip: 
-            self.latitude_data = self.latitude_data[:, ::-1]
-            self.longitude_data = self.longitude_data[:, ::-1]
+        #flip = fh_kwargs.get("flip", None)
+        #if flip is not None and flip: 
+        #    self.latitude_data = self.latitude_data[:, ::-1]
+        #    self.longitude_data = self.longitude_data[:, ::-1]
 
     def get_dataset(self, dataset_id, dataset_info):
 

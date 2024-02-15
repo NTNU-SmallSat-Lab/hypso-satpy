@@ -44,7 +44,12 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
         datacube, wavelengths = correction.run_corrections(datacube, capture_config)
 
         # Mirror image to correct orientation (moved to corrections)
-        #datacube = datacube[:, ::-1, :]
+        datacube = datacube[:, ::-1, :]
+        
+        # Flip or mirror image
+        flip = fh_kwargs.get("flip", None)
+        if flip is not None and flip: 
+            datacube = datacube[:, ::-1, :]
 
         # Convert datacube from float64 to float16
         datacube = datacube.astype('float16')
