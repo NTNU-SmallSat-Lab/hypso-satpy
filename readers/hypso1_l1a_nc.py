@@ -47,11 +47,7 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
         #datacube = datacube[:, ::-1, :]
 
         # Convert datacube from float64 to float16
-        #datacube = datacube.astype('float64')
-
-        print(np.info(datacube))
-        print('Any NaN?')
-        print(np.isnan(datacube).any())
+        datacube = datacube.astype('float16')
 
         self.lines = capture_config['lines']
         self.samples = capture_config['samples']

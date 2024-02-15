@@ -48,11 +48,7 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         #datacube = datacube[:, ::-1, :]
 
         # Convert datacube from float64 to float16
-        #datacube = datacube.astype('float16')
-
-        print(np.info(datacube))
-        print('Any NaN?')
-        print(np.isnan(datacube).any())
+        datacube = datacube.astype('float16')
 
         self.datacube = datacube
         self.wavelengths = wavelengths

@@ -20,6 +20,7 @@ files_1 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie_20
 #files_1 = find_files_and_readers(base_dir="/home/cameron/Nedlastinger/erie_2023-03-01_1559Z-l1a.nc", reader='hypso1_l1a_nc')
 
 scene_1 = Scene(filenames=files_1)
+#scene_1 = Scene(filenames=files_1, reader_kwargs={'flip': True})
 
 datasets_1 = scene_1.available_dataset_names()
 
