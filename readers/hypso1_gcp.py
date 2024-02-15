@@ -72,12 +72,12 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
     @property
     def start_time(self):
         """Start timestamp of the dataset."""
-        return self.filename_info['time']
+        return self.filename_info['start_time']
 
     @property
     def end_time(self):
         """End timestamp of the dataset."""
-        return self.filename_info['time']
+        return self.filename_info['start_time']
 
 
 

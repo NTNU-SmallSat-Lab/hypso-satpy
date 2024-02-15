@@ -134,19 +134,19 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
     @property
     def start_time(self):
         """Start timestamp of the dataset."""
-        return self.filename_info['time']
+        return self.filename_info['start_time']
 
     @property
     def end_time(self):
         """End timestamp of the dataset."""
-        return self.filename_info['time']
+        return self.filename_info['start_time']
 
     def get_dataset(self, dataset_id, dataset_info):
         try:
             if 0 <= int(dataset_id['name']) < 120:
                 dataset = self.datacube[:,:,int(dataset_id['name'])]
                 dataset = xr.DataArray(dataset, dims=["y", "x"])
-                dataset.attrs['time'] = self.filename_info['time']
+                dataset.attrs['start_time'] = self.filename_info['start_time']
                 dataset.attrs['capture_config'] = self.capture_config
                 return dataset
             else:
