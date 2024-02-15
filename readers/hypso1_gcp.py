@@ -47,6 +47,9 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         self.latitude_data = latitudes
         self.longitude_data = longitudes
 
+        print(type(latitudes))
+        print(type(longitudes))
+
         # Flip or mirror image
         flip = fh_kwargs.get("flip", None)
         if flip is not None and flip: 
