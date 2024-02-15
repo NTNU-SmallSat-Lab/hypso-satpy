@@ -16,6 +16,7 @@
 
 ## Resources
 - Online tool for generating boundary boxes (bbox) for AreaDefinitions: [bboxfinder.com](http://bboxfinder.com)
+- Pre-defined SatPy AreaDefinitions: [area.yaml](https://github.com/pytroll/satpy/blob/main/satpy/etc/areas.yaml)
 
 ## Examples
 
