@@ -47,7 +47,9 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 
     resampled_scene = scene.resample(area_def, resampler='bilinear', fill_value=np.NaN)
 
-    write_composites(scene, resampled_scene, name, gamma=2)
+    write_composites(scene, resampled_scene, name)
+
+    write_nc(scene, datasets, name)
 
 def get_area(scene, bbox=None, resolution=(500,500)):
 
@@ -99,7 +101,11 @@ def write_composites(scene, resampled_scene, name, gamma=2):
     img.gamma([gamma, gamma, gamma])
     img.save('./composites/resampled_' + name + '.png')
 
+def write_nc(scene, datasets, name):
 
+    scene.save_datasets(writer='cf', 
+                        datasets=datasets, 
+                        filename = './datasets/' + name + '.nc')
 
 # ====== Script =======
 
