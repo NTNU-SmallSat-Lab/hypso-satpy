@@ -143,8 +143,11 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
 
     def get_dataset(self, dataset_id, dataset_info):
         try:
-            if 0 <= int(dataset_id['name']) < 120:
-                dataset = self.datacube[:,:,int(dataset_id['name'])]
+            name = dataset_id['name']
+            band_str = name.split('_')[-1]
+            band_num = int(band_str)
+            if 0 <= band_num < 120:
+                dataset = self.datacube[:,:,band_num]
                 dataset = xr.DataArray(dataset, dims=["y", "x"])
                 dataset.attrs['start_time'] = self.filename_info['start_time']
                 dataset.attrs['capture_config'] = self.capture_config
@@ -168,7 +171,7 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
             ds_info = {
                 'file_type': self.filetype_info['file_type'],
                 'resolution': None,
-                'name': str(band),
+                'name': 'band_' + str(band),
                 'standard_name': 'sensor_band_identifier',
                 'coordinates': ['latitude', 'longitude'],
                 'units': "%",

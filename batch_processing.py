@@ -21,9 +21,11 @@ sys.path.insert(0,'/home/cameron/Projects/')
 # Place .nc and .points (GCPs) files in the capture_directory. 
 # NB: Filenames should match the same pattern. For example: erie_2022-07-19_1550Z-l1a.nc and erie_2022-07-19_1550Z-bin3.points.
 capture_directory = '/home/cameron/Dokumenter/Data/erie'
+capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta'
 
 # Define area of interest
-bbox = (-83.534546,41.356196,-81.359009,42.706660) # W. Lake Erie
+bbox = (-83.534546, 41.356196, -81.359009, 42.706660) # W. Lake Erie
+bbox = (13.364868, 77.401491, 17.265015, 77.915669) # Van Mijenfjorden
 
 # Specified resample image resolution:
 resolution = (500,500)
@@ -35,8 +37,9 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 
     files = [nc_file, points_file]
 
-    scene = Scene(filenames=files, reader='hypso1_l1a_nc')
+    scene = Scene(filenames=files, reader='hypso1_l1a_nc', reader_kwargs={'flip': True})
     datasets = scene.available_dataset_names()
+
     scene.load(datasets)
     #scene.load(['latitude', 'longitude', '80', '40', '15'])
 
@@ -49,8 +52,8 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 def get_area(scene, bbox=None, resolution=(500,500)):
 
     if bbox == None:
-        grid_lats = scene['80'].attrs['area'].lats.data
-        grid_lons = scene['80'].attrs['area'].lons.data   
+        grid_lats = scene['band_80'].attrs['area'].lats.data
+        grid_lons = scene['band_80'].attrs['area'].lons.data   
 
         # Is there a function that can do this? Possibly in pyresample.
         lon_min = grid_lons.min()
@@ -78,7 +81,7 @@ def write_composites(scene, resampled_scene, name, gamma=2):
     # Original capture composite
     s = scene
     compositor = GenericCompositor("overview")
-    composite = compositor([s['80'][:,::3], s['40'][:,::3], s['15'][:,::3]]) # Red, Green, Blue
+    composite = compositor([s['band_80'][:,::3], s['band_40'][:,::3], s['band_15'][:,::3]]) # Red, Green, Blue
     #composite = composite[:,:,::-1] # correct for composite mirroring
     img = to_image(composite[:,:,::-1]) 
     img.invert([False, False, False])
@@ -89,7 +92,7 @@ def write_composites(scene, resampled_scene, name, gamma=2):
     # Resampled capture composites
     s = resampled_scene
     compositor = GenericCompositor("overview")
-    composite = compositor([s['80'], s['40'], s['15']]) # Red, Green, Blue
+    composite = compositor([s['band_80'], s['band_40'], s['band_15']]) # Red, Green, Blue
     img = to_image(composite)
     img.invert([False, False, False])
     img.stretch("linear")
