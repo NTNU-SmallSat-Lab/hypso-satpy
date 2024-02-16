@@ -13,8 +13,8 @@ import os
 
 sys.path.insert(0,'/home/cameron/Projects/')
 
-files_1 = find_files_and_readers(base_dir="/home/cameron/Dropbox/Data/20220827_CaptureDL_00_erie_2022_08_27T16_05_36/", reader='hypso1_bip')
-files_2 = find_files_and_readers(base_dir="/home/cameron/Nedlastinger/20230519_CaptureDL_erie_2023-05-17_1553Z/", reader='hypso1_bip')
+files_1 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/20220827_CaptureDL_00_erie_2022_08_27T16_05_36/", reader='hypso1_bip')
+files_2 = find_files_and_readers(base_dir="/home/cameron/Dokumenter/Data/erie/20230519_CaptureDL_erie_2023-05-17_1553Z/", reader='hypso1_bip')
 
 scene_1 = Scene(filenames=files_1, reader_kwargs={'flip': True})
 scene_2 = Scene(filenames=files_2)
@@ -66,7 +66,7 @@ area_def = geometry.AreaDefinition(area_id, proj_id, description, projection,  w
 local_scene_1 = scene_1.resample(area_def, resampler='bilinear', fill_value=np.NaN)
 local_scene_2 = scene_2.resample(area_def, resampler='bilinear', fill_value=np.NaN)
 
-
+print('test')
 
 gamma = 2
 
