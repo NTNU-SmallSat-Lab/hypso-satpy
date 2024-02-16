@@ -47,8 +47,8 @@ class HYPSO1BIPFileHandler(BaseFileHandler):
         # Mirror image to correct orientation (moved to corrections)
         #datacube = datacube[:, ::-1, :]
 
-        # Convert datacube from float64 to float16
-        datacube = datacube.astype('float16')
+        # Convert datacube from float64 to float32
+        datacube = datacube.astype('float32')
 
         self.datacube = datacube
         self.wavelengths = wavelengths

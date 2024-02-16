@@ -51,8 +51,8 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
         if flip is not None and flip: 
             datacube = datacube[:, ::-1, :]
 
-        # Convert datacube from float64 to float16
-        datacube = datacube.astype('float16')
+        # Convert datacube from float64 to float32
+        datacube = datacube.astype('float32')
 
         self.lines = capture_config['lines']
         self.samples = capture_config['samples']
