@@ -49,11 +49,14 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 
     write_composites(scene, resampled_scene, name)
 
-    #write_nc(resampled_scene, scene.available_dataset_names(), name)
-    write_nc(resampled_scene, ['band_80'], name)
+    print(datasets)
 
-    #print(resampled_scene.available_dataset_names())
-    print(resampled_scene.available_dataset_ids())
+    datasets.remove('latitude')
+    datasets.remove('longitude')
+
+    #write_nc(resampled_scene, scene.available_dataset_names(), name)
+    write_nc(resampled_scene, datasets, name)
+
     #exit()
 
 def get_area(scene, bbox=None, resolution=(500,500)):
