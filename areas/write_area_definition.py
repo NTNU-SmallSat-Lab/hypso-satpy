@@ -21,6 +21,7 @@ area_extent = list(bbox)
 area_def = geometry.AreaDefinition(area_id, proj_id, description, projection,  width, height, area_extent)
 
 # Writing Area Definitions: https://pyresample.readthedocs.io/en/stable/howtos/geometry_utils.html#writing-to-disk
-filename = os.path.join('.', 'areas', area_id + '.yaml')
+#filename = os.path.join('.', 'areas', area_id + '.yaml')
+filename = os.path.join(area_id + '.yaml')
 with open(filename, 'w') as file:
     file.write(area_def.dump())
