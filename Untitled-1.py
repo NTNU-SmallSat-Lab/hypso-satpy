@@ -21,7 +21,7 @@ sys.path.insert(0,'/home/cameron/Projects/')
 # Place .nc and .points (GCPs) files in the capture_directory. 
 # NB: Filenames should match the same pattern. For example: erie_2022-07-19_1550Z-l1a.nc and erie_2022-07-19_1550Z-bin3.points.
 capture_directory = '/home/cameron/Dokumenter/Data/erie'
-capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta'
+capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta/temp'
 
 # Define area of interest
 bbox = (-83.534546, 41.356196, -81.359009, 42.706660) # W. Lake Erie
@@ -40,6 +40,8 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
     scene = Scene(filenames=files, reader='hypso1_l1a_nc', reader_kwargs={'flip': True})
     datasets = scene.available_dataset_names()
 
+    print(nc_file)
+
     scene.load(datasets)
     #scene.load(['latitude', 'longitude', '80', '40', '15'])
 
@@ -47,14 +49,16 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 
     resampled_scene = scene.resample(area_def, resampler='bilinear', fill_value=np.NaN)
 
-    write_composites(scene, resampled_scene, name)
+    #write_composites(scene, resampled_scene, name)
 
-    #write_nc(resampled_scene, scene.available_dataset_names(), name)
-    write_nc(resampled_scene, ['band_80'], name)
+    #write_nc(resampled_scene, resampled_scene.available_dataset_names(), name)
+    write_nc(resampled_scene, datasets, name)
 
     #print(resampled_scene.available_dataset_names())
-    print(resampled_scene.available_dataset_ids())
+    #print(resampled_scene.available_dataset_ids())
     #exit()
+
+    return resampled_scene
 
 def get_area(scene, bbox=None, resolution=(500,500)):
 
@@ -134,20 +138,25 @@ for l1a_file in l1a_files:
 
 #matched_pairs = [('/home/cameron/Dokumenter/Data/svalbardeidembukta/svalbardeidembukta_2023-03-16_1214Z-l1a.nc', '/home/cameron/Dokumenter/Data/svalbardeidembukta/svalbardeidembukta_2023-03-16_1214Z-bin3.points', 'svalbardeidembukta_2023-03-16_1214Z')]
 
+scenes = []
+
 for pair in matched_pairs:
 
     nc_file = pair[0]
     points_file = pair[1]
     name = pair[2]
 
-    process_capture(nc_file=nc_file, 
+    s = process_capture(nc_file=nc_file, 
                     points_file=points_file, 
                     name=name, 
                     bbox=bbox, 
                     resolution=resolution)
 
+    scenes.append(s)
 
 
+s = scenes[1]
+s.available_dataset_names()
 
 
 
