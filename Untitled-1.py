@@ -51,6 +51,11 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
 
     #write_composites(scene, resampled_scene, name)
 
+    #datasets = ['band_80']
+    #datasets = ['latitude']
+    datasets = ['band_80', 'latitude']
+
+
     #write_nc(resampled_scene, resampled_scene.available_dataset_names(), name)
     write_nc(resampled_scene, datasets, name)
 
@@ -155,7 +160,7 @@ for pair in matched_pairs:
     scenes.append(s)
 
 
-s = scenes[1]
+s = scenes[0]
 s.available_dataset_names()
 
 
