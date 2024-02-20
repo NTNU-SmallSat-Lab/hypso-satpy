@@ -21,11 +21,11 @@ sys.path.insert(0,'/home/cameron/Projects/')
 # Place .nc and .points (GCPs) files in the capture_directory. 
 # NB: Filenames should match the same pattern. For example: erie_2022-07-19_1550Z-l1a.nc and erie_2022-07-19_1550Z-bin3.points.
 capture_directory = '/home/cameron/Dokumenter/Data/erie'
-capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta'
+#capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta'
 
 # Define area of interest
 bbox = (-83.534546, 41.356196, -81.359009, 42.706660) # W. Lake Erie
-bbox = (13.364868, 77.401491, 17.265015, 77.915669) # Van Mijenfjorden
+#bbox = (13.364868, 77.401491, 17.265015, 77.915669) # Van Mijenfjorden
 
 # Specified resample image resolution:
 resolution = (500,500)
@@ -36,6 +36,8 @@ resolution = (500,500)
 def process_capture(nc_file, points_file, name, bbox, resolution):
 
     files = [nc_file, points_file]
+
+    print('[INFO] Processing capture ' + str(nc_file))
 
     scene = Scene(filenames=files, reader='hypso1_l1a_nc', reader_kwargs={'flip': True})
     datasets = scene.available_dataset_names()
@@ -48,8 +50,6 @@ def process_capture(nc_file, points_file, name, bbox, resolution):
     resampled_scene = scene.resample(area_def, resampler='bilinear', fill_value=np.NaN)
 
     write_composites(scene, resampled_scene, name)
-
-    print(datasets)
 
     datasets.remove('latitude')
     datasets.remove('longitude')

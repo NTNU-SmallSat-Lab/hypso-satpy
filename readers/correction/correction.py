@@ -212,8 +212,8 @@ def get_calibrated_and_corrected_cube(info: dict, raw_cube: np.ndarray, calibrat
                                      calibration_coefficients_dict) / 10
 
     # Smile correction
-    #cube_smile_corrected = smile_correct_cube(cube_calibrated, 
-    #                                          calibration_coefficients_dict)
+    cube_smile_corrected = smile_correct_cube(cube_calibrated, 
+                                              calibration_coefficients_dict)
 
     # Destriping
     cube_calibrated = destriping_correct_cube(cube_calibrated, 
