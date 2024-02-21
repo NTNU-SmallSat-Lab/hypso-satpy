@@ -1,0 +1,10 @@
+sensor_name: hypso1
+
+composites:
+  overview:
+    compositor: !!python/name:satpy.composites.GenericCompositor
+    prerequisites:
+    - band_80
+    - band_40
+    - band_15
+    standard_name: RGB
