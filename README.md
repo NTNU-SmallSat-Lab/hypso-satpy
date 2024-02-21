@@ -13,6 +13,7 @@
 - [Pyresample Geometry Definitions](https://pyresample.readthedocs.io/en/latest/howtos/geo_def.html)
 - [Resampling of Swath Data](https://pyresample.readthedocs.io/en/latest/howtos/swath.html)
 - [MultiScene](https://satpy.readthedocs.io/en/stable/multiscene.html)
+- [Configuration](https://satpy.readthedocs.io/en/stable/config.html)
 
 ## Resources
 - Online tool for generating boundary boxes (bbox) for AreaDefinitions: [bboxfinder.com](http://bboxfinder.com)
