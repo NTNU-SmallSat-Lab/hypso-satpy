@@ -97,7 +97,7 @@ def write_composites(scene, resampled_scene, name, gamma=2):
     img.invert([False, False, False])
     img.stretch("linear")
     img.gamma([gamma, gamma, gamma])
-    img.save('./composites/' + name + '.png')
+    img.save('./composites_out/' + name + '.png')
 
     # Resampled capture composites
     s = resampled_scene
@@ -107,13 +107,13 @@ def write_composites(scene, resampled_scene, name, gamma=2):
     img.invert([False, False, False])
     img.stretch("linear")
     img.gamma([gamma, gamma, gamma])
-    img.save('./composites/resampled_' + name + '.png')
+    img.save('./composites_out/resampled_' + name + '.png')
 
 def write_nc(scene, datasets, name):
 
     scene.save_datasets(writer='cf', 
                         datasets=datasets, 
-                        filename = './datasets/' + name + '.nc')
+                        filename = './datasets_out/' + name + '.nc')
 
 # ====== Script =======
 
