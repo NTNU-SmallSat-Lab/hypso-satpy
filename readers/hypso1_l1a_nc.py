@@ -53,11 +53,6 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
 
         samples_total = self.file_content['/dimension/adcssamples']
 
-        #st_quaternion_s = self.get_and_cache_npxr('metadata/adcs/st_quaternion_s')
-        #st_quaternion_x = self.get_and_cache_npxr('metadata/adcs/st_quaternion_x')
-        #st_quaternion_y = self.get_and_cache_npxr('metadata/adcs/st_quaternion_y')
-        #st_quaternion_z = self.get_and_cache_npxr('metadata/adcs/st_quaternion_z')
-
         st_quaternion_s = self.get_and_cache_npxr('metadata/adcs/quaternion_s')
         st_quaternion_x = self.get_and_cache_npxr('metadata/adcs/quaternion_x')
         st_quaternion_y = self.get_and_cache_npxr('metadata/adcs/quaternion_y')
@@ -90,9 +85,6 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
         else: 
             # was pointing in velocity direction --> do flip
             flip = True
-
-        print('[INFO] Flip status:')
-        print(flip)
 
         if flip is not None and flip: 
             datacube = datacube[:, ::-1, :]

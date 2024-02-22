@@ -1,10 +1,39 @@
-van_mijenfjorden:
-  description: roi
+# https://proj.org/en/9.3/operations/projections/stere.html
+
+sval2:
+  description: Svalbard Van Mijenfjorden
   projection:
-    EPSG: 4326
+    proj: stere
+    ellps: WGS84
+    lat_0: 90.0
+    lon_0: 15.6
+    lat_ts: 78.2
   shape:
-    height: 1000
-    width: 500
+    height: 1024
+    width: 1024
   area_extent:
-    lower_left_xy: [13.364868, 77.401491]
-    upper_right_xy: [17.265015, 77.915669]
+    #lower_left_xy: [1000000, -1630805.15418955]
+    #lower_left_xy: [-287554.9489620461, -1630805.15418955]
+    #upper_right_xy: [500000, -906805.1541895501]
+    lower_left_xy: [-280000, -1500000]
+    upper_right_xy: [500000, -1000000]
+
+
+
+sval3:
+  description: Svalbard Van Mijenfjorden
+  projection:
+    proj: stere
+    ellps: WGS84
+    lat_0: 90.0
+    lon_0: 15.6
+    lat_ts: 78.2
+  shape:
+    height: 1024
+    width: 1024
+  area_extent:
+    lower_left_xy: [-280000, -1300000]
+    upper_right_xy: [500000, -1000000]
+
+
+

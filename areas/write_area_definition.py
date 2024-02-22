@@ -25,3 +25,5 @@ area_def = geometry.AreaDefinition(area_id, proj_id, description, projection,  w
 filename = os.path.join(area_id + '.yaml')
 with open(filename, 'w') as file:
     file.write(area_def.dump())
+
+#my_area = load_area('my_areas.yaml', 'my_area')
