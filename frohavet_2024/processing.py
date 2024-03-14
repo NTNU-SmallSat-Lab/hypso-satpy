@@ -20,7 +20,7 @@ sys.path.insert(0,'/home/cameron/Projects/')
 
 # Place .nc and .points (GCPs) files in the capture_directory. 
 # NB: Filenames should match the same pattern. For example: erie_2022-07-19_1550Z-l1a.nc and erie_2022-07-19_1550Z-bin3.points.
-capture_directory = '/home/cameron/Dokumenter/Data/frohavet'
+capture_directory = '/home/cameron/Dokumenter/Data/erie'
 #capture_directory = '/home/cameron/Dokumenter/Data/svalbardeidembukta'
 
 # Define area of interest
