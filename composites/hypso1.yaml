@@ -8,3 +8,10 @@ composites:
     - band_40
     - band_15
     standard_name: RGB
+  rgb_sval:
+    compositor: !!python/name:satpy.composites.GenericCompositor
+    prerequisites:
+    - band_65
+    - band_47
+    - band_20
+    standard_name: RGB_Sval
