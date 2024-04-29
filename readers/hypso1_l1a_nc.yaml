@@ -14,12 +14,16 @@ datasets:
     name: longitude
     standard_name: longitude
     units: degrees_east
+    resolution: -999
+    sensor: HYPSO-1
     file_type: [hypso1_gcp_points_lat_lon]
 
   latitude:
     name: latitude
     standard_name: latitude
     units: degrees_north
+    resolution: -999
+    sensor: HYPSO-1
     file_type: [hypso1_gcp_points_lat_lon]
 
 

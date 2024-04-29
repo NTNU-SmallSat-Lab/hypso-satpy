@@ -133,10 +133,16 @@ class HYPSO1FootprintWKTFileHandler(BaseFileHandler):
         if dataset_id['name'] == 'latitude':
             dataset = xr.DataArray(self.latitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'latitude'
+            dataset.attrs['units'] = 'degrees_north'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         elif dataset_id['name'] == 'longitude':
             dataset = xr.DataArray(self.longitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'longitude'
+            dataset.attrs['units'] = 'degrees_east'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         else:
             dataset = None

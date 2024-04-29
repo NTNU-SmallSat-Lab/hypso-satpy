@@ -41,6 +41,9 @@ class HYPSO1LonDatFileHandler(BaseFileHandler):
             longitude_data = self.longitude_data
             dataset = xr.DataArray(longitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'longitude'
+            dataset.attrs['units'] = 'degrees_east'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         else:
             dataset = None

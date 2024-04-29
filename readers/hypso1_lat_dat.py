@@ -41,6 +41,9 @@ class HYPSO1LatDatFileHandler(BaseFileHandler):
             latitude_data = self.latitude_data
             dataset = xr.DataArray(latitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'latitude'
+            dataset.attrs['units'] = 'degrees_north'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         else:
             dataset = None

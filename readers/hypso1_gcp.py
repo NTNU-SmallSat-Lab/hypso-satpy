@@ -59,11 +59,17 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
             latitude_data = self.latitude_data
             dataset = xr.DataArray(latitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'latitude'
+            dataset.attrs['units'] = 'degrees_north'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         elif dataset_id['name'] == 'longitude':
             longitude_data = self.longitude_data
             dataset = xr.DataArray(longitude_data, dims=["y", "x"])
             dataset.attrs['standard_name'] = 'longitude'
+            dataset.attrs['units'] = 'degrees_east'
+            dataset.attrs['resolution'] = -999 # TODO
+            dataset.attrs['sensor'] = 'HYPSO-1'
             return dataset
         else:
             dataset = None

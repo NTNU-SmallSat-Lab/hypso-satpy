@@ -12,6 +12,7 @@ import numpy as np
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
 from satpy.readers.netcdf_utils import NetCDF4FileHandler
+from satpy.dataset.dataid import WavelengthRange
 
 import correction.correction as correction
 
@@ -224,7 +225,8 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
                 'standard_name': 'sensor_band_identifier',
                 'coordinates': ['latitude', 'longitude'],
                 'units': "%",
-                'wavelength': self.wavelengths[band]
+                #'wavelength': self.wavelengths[band],
+                'wavelength': WavelengthRange(min=self.wavelengths[band], central=self.wavelengths[band], max=self.wavelengths[band], unit="nm")
             }
             #yield True, ds_info
             bands.append(ds_info)

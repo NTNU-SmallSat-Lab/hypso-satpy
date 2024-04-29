@@ -1,0 +1,3 @@
+scp hypso@129.241.2.147:/home/hypso/kristianB/ntnustoragemount/eo-data_mock/hypso1_mock/L1A-data_mock/mjosa_2022-06-23_0942Z-l1a.nc Documents/
+
+scp hypso@129.241.2.147:/home/hypso/kristianB/ntnustoragemount/eo-data_mock/hypso1_mock/L1A-data_mock/frohavetsouth_2024-04-21_1104Z_2-l1a.nc .
