@@ -28,6 +28,7 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         
         self.filename = filename
 
+        # These values are loaded from the required file handler (usually from the l1a reader) automatically passed in the req_fh argument
         self.lines = req_fh[0].lines
         self.samples = req_fh[0].samples
         self.bands = req_fh[0].bands
