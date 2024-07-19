@@ -6,7 +6,7 @@
 
 import xarray as xr
 from satpy.readers.file_handlers import BaseFileHandler
-import georeferencing.georeferencing
+from georeferencing.georeferencing import Georeferencer
 
 class HYPSO1GCPPointsFileHandler(BaseFileHandler):
     """HYPSO-1 GCP .points file reader that does NOT generate latitude and longitude arrays."""
@@ -40,7 +40,7 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         self.latitude_data = None
         self.longitude_data = None
         
-        gr = georeferencing.Georeferencer(self.filename, 
+        gr = Georeferencer(self.filename, 
                                           cube_height=self.lines, 
                                           cube_width=self.samples, 
                                           image_mode=self.image_mode,
