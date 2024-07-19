@@ -14,11 +14,17 @@ class HYPSO1GCPPointsFileHandler(BaseFileHandler):
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
         super().__init__(filename, filename_info, filetype_info)
         
+        self.filename = filename
+
         self.filename_info = filename_info
         self.platform_name = 'hypso1'
         self.sensor = "hypso1"
 
-        self.gcp_list = georeferencing.GCPList(filename)
+        # Retrieve image_mode from filename pattern
+        self.image_mode = self.filename_info['image_mode']
+
+        # TODO: create Georeferencer object from this?
+        #self.gcp_list = georeferencing.GCPList(filename)
 
 class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
     """HYPSO-1 GCP .points file reader that generates latitude and longitude arrays."""
@@ -26,8 +32,6 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
     def __init__(self, filename, filename_info, filetype_info, *req_fh, **fh_kwargs):
         super().__init__(filename, filename_info, filetype_info)
         
-        self.filename = filename
-
         # These values are loaded from the required file handler (usually from the l1a reader) automatically passed in the req_fh argument
         self.lines = req_fh[0].lines
         self.samples = req_fh[0].samples
@@ -36,17 +40,20 @@ class HYPSO1GCPPointsLatLonFileHandler(HYPSO1GCPPointsFileHandler):
         self.latitude_data = None
         self.longitude_data = None
         
-        gr = georeferencing.Georeferencer(self.filename, self.lines, self.samples)
+        gr = georeferencing.Georeferencer(self.filename, 
+                                          cube_height=self.lines, 
+                                          cube_width=self.samples, 
+                                          image_mode=self.image_mode,
+                                          origin_mode='qgis', #TODO: add support for changing this
+                                          crs='epsg:4326' #TODO: add support for changing this
+                                          )
 
-        latitudes = gr.latitudes
-        longitudes = gr.longitudes
+        self.latitude_data = gr.latitudes
+        self.longitude_data = gr.longitudes
 
         # Mirror image to correct orientation (moved to georeferencing)
         #latitudes = latitudes[:,::-1]
         #longitudes = longitudes[:,::-1]
-
-        self.latitude_data = latitudes
-        self.longitude_data = longitudes
 
         # Flip or mirror image
         #flip = fh_kwargs.get("flip", None)

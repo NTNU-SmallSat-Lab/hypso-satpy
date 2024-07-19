@@ -32,7 +32,11 @@ file_types:
     hypso1_l1a_nc:
         file_reader: !!python/name:hypso-satpy.readers.hypso1_l1a_nc.HYPSO1L1aNCFileHandler
         file_patterns: ['{target}_{start_time:%Y-%m-%d_%H%MZ}-l1a.nc']
+#    hypso1_gcp_points_lat_lon:
+#        file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsLatLonFileHandler
+#        file_patterns: ['{target}_{start_time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{start_time:%Y_%m_%dT%H_%M_%S}-bin3.points', '{target}_{start_time:%Y-%m-%d_%H%MZ}-bin3-sift.points']
+#        requires: [hypso1_l1a_nc]
     hypso1_gcp_points_lat_lon:
         file_reader: !!python/name:hypso-satpy.readers.hypso1_gcp.HYPSO1GCPPointsLatLonFileHandler
-        file_patterns: ['{target}_{start_time:%Y-%m-%d_%H%MZ}-bin3.points', '{target}_{start_time:%Y_%m_%dT%H_%M_%S}-bin3.points', '{target}_{start_time:%Y-%m-%d_%H%MZ}-bin3-sift.points']
+        file_patterns: ['{target}_{start_time:%Y-%m-%d_%H%MZ}-{image_mode}.points']
         requires: [hypso1_l1a_nc]
