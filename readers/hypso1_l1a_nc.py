@@ -63,6 +63,8 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
         # Flip or mirror image
         #flip = fh_kwargs.get("flip", None)
 
+        # Code copied from https://github.com/NTNU-SmallSat-Lab/ground_systems/blob/4c41925f5fbf6161a60d273cfee82bce22cfeffc/scripts/capture_processing/adcs-tm-strip.py#L152
+
         samples_total = self.file_content['/dimension/adcssamples']
 
         st_quaternion_s = self.get_and_cache_npxr('metadata/adcs/quaternion_s')
