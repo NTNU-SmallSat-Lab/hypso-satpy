@@ -14,9 +14,9 @@ from satpy.readers.file_handlers import BaseFileHandler
 from satpy.readers.netcdf_utils import NetCDF4FileHandler
 from satpy.dataset.dataid import WavelengthRange
 
-import correction.correction as correction
+#import correction.correction as correction
 
-from hypso import Hypso
+#from hypso import Hypso
 
 
 class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
@@ -39,26 +39,23 @@ class HYPSO1L1aNCFileHandler(NetCDF4FileHandler):
 
         use_hypso_package = False
 
-        if use_hypso_package:
-            satobj = Hypso(filename, points_path=None)
-            datacube = satobj.l1b_cube
-            wavelengths = satobj.wavelengths
-            
-        else:
-            # Load datacube as xarray
-            datacube = self.get_and_cache_npxr('products/Lt')
 
-            # Convert xarray datacube to numpy datacube
-            datacube = datacube.to_numpy()
+        # Load datacube as xarray
+        datacube = self.get_and_cache_npxr('products/Lt')
 
-            # Convert type
-            datacube = datacube.astype('uint16')
+        # Convert xarray datacube to numpy datacube
+        datacube = datacube.to_numpy()
 
-            # Apply corrections to datacube
-            datacube, wavelengths = correction.run_corrections(datacube, capture_config)
+        # Convert type
+        datacube = datacube.astype('uint16')
 
-            # Mirror image to correct orientation (moved to corrections)
-            datacube = datacube[:, ::-1, :]
+        # Apply corrections to datacube
+        #datacube, wavelengths = correction.run_corrections(datacube, capture_config)
+
+        wavelengths = list(range(1,121))
+
+        # Mirror image to correct orientation (moved to corrections)
+        datacube = datacube[:, ::-1, :]
         
         # Flip or mirror image
         #flip = fh_kwargs.get("flip", None)
